@@ -9,11 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 class MiniPayApplicationTests {
 
     @Autowired
-    private WXNativeService wxService;
+    private WXNativeService wxNativeService;
 
     @Test
     void contextLoads() {
-        wxService.preNativePay(100, "商品标题");
+        // 获取code url
+        String code_url = wxNativeService.preNativePay("trade_no_1", "测试商品", 1);
+        // TODO 获取二维码
     }
 
 }

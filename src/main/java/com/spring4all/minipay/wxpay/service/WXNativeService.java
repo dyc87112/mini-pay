@@ -35,16 +35,17 @@ public class WXNativeService {
         log.info("WX Pay Service init success");
     }
 
-    public String preNativePay(int amount, String description) {
+    public String preNativePay(String tradeNo, String description, int totalFee) {
         PrepayRequest request = new PrepayRequest();
         request.setAppid(wxPayConfig.getAppId());
         request.setMchid(wxPayConfig.getMerchantId());
+        request.setNotifyUrl(wxPayConfig.getNotifyUrl());
+        request.setOutTradeNo(tradeNo);
         request.setDescription(description);
-        request.setNotifyUrl("https://notify_url");
-        request.setOutTradeNo("out_trade_no_001");
-        Amount _amount = new Amount();
-        _amount.setTotal(amount);
-        request.setAmount(_amount);
+
+        Amount amount = new Amount();
+        amount.setTotal(totalFee);
+        request.setAmount(amount);
 
         PrepayResponse response = nativePayService.prepay(request); // 调用下单方法，得到应答
         return response.getCodeUrl(); // 使用微信扫描 code_url 对应的二维码，即可体验Native支付

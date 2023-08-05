@@ -14,5 +14,6 @@ public class WXPayConfig {
     private String merchantSerialNumber;
     private String privateKeyPath;
     private String apiV3Key;
+    private String notifyUrl;
 
 }
