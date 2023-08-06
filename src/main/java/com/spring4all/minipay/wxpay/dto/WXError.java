@@ -37,8 +37,6 @@ import lombok.Data;
 @Data
 public class WXError {
 
-
-
     private String code;
     private String message;
 

@@ -34,3 +34,7 @@ build/
 
 application-dev.properties
 /src/test/resources/application.properties
+/.fastRequest/collections/Root/Default Group/directory.json
+/.fastRequest/collections/Root/directory.json
+/.fastRequest/config/fastRequestCurrentProjectConfig.json
+/.fastRequest/config/fastRequestCurrentProjectEnvironment.json
