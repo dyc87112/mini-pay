@@ -2,6 +2,8 @@ package com.spring4all.minipay.wxpay.service;
 
 import com.spring4all.minipay.wxpay.WXPayConfig;
 import com.spring4all.minipay.wxpay.WXPayProperties;
+import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
+import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.wechat.pay.java.core.exception.ServiceException;
 import com.wechat.pay.java.core.notification.NotificationParser;
 import com.wechat.pay.java.core.notification.RequestParam;
@@ -14,19 +16,22 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class WXNativeService {
+    private final WXTradeRepository wXTradeRepository;
 
     private WXPayProperties wxPayProperties;
     private NativePayService nativePayService;
     private NotificationParser notificationParser;
 
 
-    public WXNativeService(WXPayConfig wxPayConfig) {
+    public WXNativeService(WXPayConfig wxPayConfig,
+                           WXTradeRepository wXTradeRepository) {
         this.wxPayProperties = wxPayConfig.getWxPayProperties();
 
         this.nativePayService = new NativePayService.Builder().config(wxPayConfig.getConfig()).build();
         this.notificationParser = new NotificationParser(wxPayConfig.getConfig());
 
         log.info("微信支付配置初始化：成功！");
+        this.wXTradeRepository = wXTradeRepository;
     }
 
     public String preNativePay(String outTradeNo, String description, int totalFee) {
@@ -41,15 +46,16 @@ public class WXNativeService {
         amount.setTotal(totalFee);
         request.setAmount(amount);
 
-        // TODO 存储本地下单数据
-
         // 调用微信接口预下单
         PrepayResponse response = nativePayService.prepay(request); // 调用下单方法，得到应答
         String codeUrl = response.getCodeUrl(); // 使用微信扫描 code_url 对应的二维码，即可体验Native支付
         log.info("预支付 codeUrl = {}", codeUrl);
 
-        // TODO 查询微信支付的订单，更新本地下单数据
+        // 查询微信支付的订单，获取完整信息，并存储到本地数据库
         Transaction t = queryOrderByOutTradeNo(outTradeNo);
+        WXTrade wxTrade = new WXTrade();
+        wxTrade.prepayUpdate(t);
+        wXTradeRepository.save(wxTrade);
 
         return codeUrl;
     }
@@ -122,10 +128,10 @@ public class WXNativeService {
 
     /**
      * 处理支付回调
-     *
+     * <p>
      * 支付结果通知是指在用户完成支付后，微信支付系统通过异步回调的方式通知商户关于支付结果。
      * 商户需要在接收到支付结果通知后，对通知内容进行验证和处理，确保交易的正确性和安全性。
-     *
+     * <p>
      * 支付结果通知包含以下信息：
      * - 通知内容：包括支付状态、订单号、支付金额等交易信息。
      * - 通知签名：请求头包含签名信息，商户需验证签名以确保通知内容的真实性。
@@ -150,11 +156,13 @@ public class WXNativeService {
                 .timestamp(timestamp)
                 .body(body)
                 .build();
-        // {"amount":{"currency":"CNY","payer_currency":"CNY","payer_total":1,"total":1},"appid":"wxe50aa6193fc2252e","attach":"","bank_type":"OTHERS","mchid":"1596580851","out_trade_no":"trade_no_2","payer":{"openid":"oJIIz6ozMiqxG2-r166S4cIbY4J8"},"success_time":"2023-08-06T17:06:14+08:00","trade_state":"SUCCESS","trade_state_desc":"支付成功","trade_type":"NATIVE","transaction_id":"4200001900202308063951583810"}
-        Transaction transaction = this.notificationParser.parse(requestParam, Transaction.class);
-        log.info("notify body parse = {}", transaction);
+        Transaction t = this.notificationParser.parse(requestParam, Transaction.class);
+        log.info("notify body parse = {}", t);
 
         // TODO 解析后更新本地订单数据
+        WXTrade wxTrade = wXTradeRepository.findByOutTradeNo(t.getOutTradeNo());
+        wxTrade.notificationUpdate(t);
+        wXTradeRepository.save(wxTrade);
 
         // TODO 通知订阅方订单状态更新
 
