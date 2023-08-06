@@ -13,15 +13,18 @@ class MiniPayApplicationTests {
 
     @Test
     void preNativePay() {
-        // 获取code url
-        String code_url = wxNativeService.preNativePay("trade_no_1", "测试商品", 1);
+        // 商户订单已存在的异常
+//        wxNativeService.preNativePay("trade_no_1", "测试商品", 1);
         // TODO 获取二维码
+        wxNativeService.preNativePay("trade_no_2", "测试商品", 1);
     }
     @Test
     void queryOrderByOutTradeNo() {
         wxNativeService.queryOrderByOutTradeNo("trade_no_1");
+        wxNativeService.queryOrderByOutTradeNo("trade_no_2");
     }
 
+    @Test
     void closeOrder() {
         wxNativeService.closeOrderByOutTradeNo("trade_no_1");
     }

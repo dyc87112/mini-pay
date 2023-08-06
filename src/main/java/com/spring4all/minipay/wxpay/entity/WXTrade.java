@@ -5,6 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.util.Date;
 
 @Data
 @Entity(name = "wx_trade")
@@ -20,5 +23,8 @@ public class WXTrade {
     private String trade_state_desc;
     private String payer_currency;
     private Integer total;
+
+    @CreatedDate
+    private Date createTime;
 
 }
