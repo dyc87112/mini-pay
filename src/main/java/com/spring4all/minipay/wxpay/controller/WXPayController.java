@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Data
 @Slf4j
@@ -24,9 +21,9 @@ public class WXPayController {
     /**
      * 下单接口，获取微信支付的链接
      *
-     * @param tradeNo
-     * @param description
-     * @param totalFee
+     * @param tradeNo，用户端生成
+     * @param skuName
+     * @param totalFee，单位:分
      * @return
      * @throws Exception
      */
@@ -34,10 +31,10 @@ public class WXPayController {
     public CommonResponse<String> prepay(@RequestParam String tradeNo,
                                          @RequestParam String skuName,
                                          @RequestParam int totalFee) throws Exception {
-        log.info("下单准备：tradeNo = {}, skuName = {}, totalFee = {}", tradeNo, skuName, totalFee);
+        log.info("预支付：tradeNo = {}, skuName = {}, totalFee = {}", tradeNo, skuName, totalFee);
         String codeURl = wxNativeService.preNativePay(tradeNo, skuName, totalFee);
-        log.info("下单准备：tradeNo = {}, codeURl = {}", codeURl);
-        return new CommonResponse<String>("200", "准备下单", codeURl);
+        log.info("预支付：tradeNo = {}, codeURl = {}", tradeNo, codeURl);
+        return new CommonResponse<String>("200", "预支付", codeURl);
     }
 
     /**
@@ -55,6 +52,17 @@ public class WXPayController {
         log.info("生成支付二维码, codeUrl = {}", codeUrl);
         response.setContentType("image/png");
         QRCodeUtils.writeToStream(codeUrl, response.getOutputStream(), 300, 300);
+    }
+
+    /**
+     *
+     * @param body
+     * @return
+     */
+    @PostMapping("/notify")
+    public String notify(@RequestBody String body){
+        log.info("notify body: {}", body);
+        return "";
     }
 
 }

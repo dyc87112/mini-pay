@@ -19,6 +19,9 @@ target/
 *.iml
 *.ipr
 
+### IntelliJ IDEA Plugin###
+.fastRequest
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -32,9 +35,7 @@ build/
 ### VS Code ###
 .vscode/
 
-application-dev.properties
+## config
+/src/main/resources/application-dev.properties
+/src/main/resources/application-prod.properties
 /src/test/resources/application.properties
-/.fastRequest/collections/Root/Default Group/directory.json
-/.fastRequest/collections/Root/directory.json
-/.fastRequest/config/fastRequestCurrentProjectConfig.json
-/.fastRequest/config/fastRequestCurrentProjectEnvironment.json
