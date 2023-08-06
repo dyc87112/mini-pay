@@ -21,19 +21,19 @@ public class WXPayController extends WXPayBaseController {
     /**
      * 下单接口，获取微信支付的链接
      *
-     * @param tradeNo，用户端生成
-     * @param skuName
-     * @param totalFee，单位:分
+     * @param outTradeNo，商户订单号（用户端自己生成）
+     * @param description，订单描述
+     * @param totalFee，单位：分
      * @return
      * @throws Exception
      */
     @GetMapping("/prepay")
-    public CommonResponse<String> prepay(@RequestParam String tradeNo,
-                                         @RequestParam String skuName,
+    public CommonResponse<String> prepay(@RequestParam String outTradeNo,
+                                         @RequestParam String description,
                                          @RequestParam int totalFee) throws Exception {
-        log.info("预支付：tradeNo = {}, skuName = {}, totalFee = {}", tradeNo, skuName, totalFee);
-        String codeURl = wxNativeService.preNativePay(tradeNo, skuName, totalFee);
-        log.info("预支付：tradeNo = {}, codeURl = {}", tradeNo, codeURl);
+        log.info("预支付：outTradeNo = {}, skuName = {}, totalFee = {}", outTradeNo, description, totalFee);
+        String codeURl = wxNativeService.preNativePay(outTradeNo, description, totalFee);
+        log.info("预支付：outTradeNo = {}, codeURl = {}", outTradeNo, codeURl);
         return new CommonResponse<String>("200", "预支付", codeURl);
     }
 
