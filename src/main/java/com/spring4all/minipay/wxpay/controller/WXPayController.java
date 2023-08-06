@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/wxpay")
 @AllArgsConstructor
-public class WXPayController {
+public class WXPayController extends WXPayBaseController {
 
     private WXNativeService wxNativeService;
 
