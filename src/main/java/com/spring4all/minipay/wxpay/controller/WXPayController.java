@@ -86,4 +86,10 @@ public class WXPayController extends WXPayBaseController {
         return new CommonResponse<>("200", "查询本地订单成功", t);
     }
 
+    @GetMapping("/closeTrade")
+    public CommonResponse<String> closeTrade(@RequestParam String outTradeNo) {
+        wxNativeService.closeOrderByOutTradeNo(outTradeNo);
+        return new CommonResponse<>("200", "关闭订单成功", outTradeNo);
+    }
+
 }

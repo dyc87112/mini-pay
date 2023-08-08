@@ -46,6 +46,8 @@
                     </td>
                 </tr>
             </table>
+            <p>返回数据：</p>
+            <p id="prepay-result" style="color: red;"></p>
             <script type="text/javascript">
                 function prepay() {
                     $.ajax({
@@ -57,7 +59,7 @@
                             totalFee: $("#totalFee").val()
                         },
                         success: function (result) {
-                            console.log(JSON.stringify(result));
+                            $("#prepay-result").html(JSON.stringify(result));
                             const code = result["code"];
                             const message = result["message"];
                             const detail = result["detail"];
@@ -66,17 +68,19 @@
                                 $("#codeUrl").val(detail);
                                 $("#qrcode").attr("src", "/wxpay/qrcode?codeUrl=" + $("#codeUrl").val());
                                 $("#outTradeNo_query").val($("#outTradeNo").val());
-                            } else {
-                                alert(code + " : " + message);
+                                $("#outTradeNo_close").val($("#outTradeNo").val());
                             }
                         },
                         error: function (result) {
-                            alert(JSON.stringify(result));
+                            $("#prepay-result").html(JSON.stringify(result));
                         }
                     });
                 }
             </script>
         </div>
+    </div>
+    <hr>
+    <div class="row">
         <div class="col">
             <h2>第2步：获取支付二维码</h2>
             <p>调用接口：/wxpay/prepay</p>
@@ -110,10 +114,10 @@
             </script>
         </div>
     </div>
-    <br><br><br>
+    <hr>
     <div class="row">
         <div class="col">
-            <h2>第3步：支付等待回调</h2>
+            <h2>第3步：等待支付回调</h2>
             <div style="margin: 20px">
                 outTradeNo：<input id="outTradeNo_query" type="text"/>
             </div>
@@ -194,6 +198,36 @@
             </script>
         </div>
     </div>
+
+    <div class="row">
+        <h2>其他操作</h2>
+        <div style="margin: 20px">
+            outTradeNo：<input id="outTradeNo_close" type="text"/>
+            <button type="button" onclick="closeTrade()">关闭订单</button>
+        </div>
+        <script>
+            function closeTrade() {
+                $.ajax({
+                    url: "/wxpay/closeTrade",
+                    type: "GET",
+                    data: {
+                        outTradeNo: $("#outTradeNo_close").val(),
+                    },
+                    success: function (result) {
+                        console.log(JSON.stringify(result));
+                        const code = result["code"];
+                        const message = result["message"];
+                        const detail = result["detail"];
+                        alert(code + " : " + message);
+                    },
+                    error: function (result) {
+                        alert(JSON.stringify(result));
+                    }
+                });
+            }
+        </script>
+    </div>
+    <br>
 </div>
 </body>
 </html>
