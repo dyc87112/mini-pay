@@ -39,8 +39,7 @@ class MiniPayApplicationTests {
 
     @Test
     void closeOrder() {
-        wxNativeService.closeOrderByOutTradeNo("trade_no_1");
+        wxNativeService.closeOrderByOutTradeNo("out_trade_no_4");
     }
-
 
 }

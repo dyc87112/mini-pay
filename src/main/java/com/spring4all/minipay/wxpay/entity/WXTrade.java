@@ -19,10 +19,12 @@ public class WXTrade {
 
     private String appid;
     private String mchid;
+    @Column(unique = true)
     private String outTradeNo;
     private String tradeState;
     private String tradeStateDesc;
     private String tradeType;
+    private String codeUrl;
     private String currency;
     private Integer total;
     private String payerCurrency;

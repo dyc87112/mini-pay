@@ -1,5 +1,6 @@
 package com.spring4all.minipay.wxpay.service;
 
+import com.spring4all.minipay.exception.TradeIsClosedException;
 import com.spring4all.minipay.wxpay.WXPayConfig;
 import com.spring4all.minipay.wxpay.WXPayProperties;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
@@ -35,8 +36,26 @@ public class WXNativeService {
     }
 
     public String preNativePay(String outTradeNo, String description, int totalFee) {
-        // FIXME 现在有个问题，outTradeNo要唯一
+        // 该商户订单号存在，同时商户订单还没有关闭，那么就直接返回codeUrl给商户扫码支付
+        WXTrade _wxTrade = wXTradeRepository.findByOutTradeNo(outTradeNo);
+        if (_wxTrade != null) {
+            // 本地数据记录订单已经关闭，则直接抛出异常
+            if (_wxTrade.getTradeState().equalsIgnoreCase("CLOSED")) {
+                throw new TradeIsClosedException();
+            }
+            // 本地数据记录订单未关闭，插微信端是否已经关闭，如果已经关闭，更新本地，并抛出异常
+            Transaction t = queryWXPayTradeByOutTradeNo(outTradeNo);
+            if (t.getTradeState().equals(Transaction.TradeStateEnum.CLOSED)) {
+                _wxTrade.setTradeState(t.getTradeState().name());
+                _wxTrade.setTradeStateDesc(t.getTradeStateDesc());
+                wXTradeRepository.save(_wxTrade);
+                throw new TradeIsClosedException();
+            }
+            log.info("outTradeNo = {} 已存在，直接返回 codeUrl = {}", outTradeNo, _wxTrade.getCodeUrl());
+            return _wxTrade.getCodeUrl();
+        }
 
+        // 商户订单号没问题，准备调用微信的与下单
         PrepayRequest request = new PrepayRequest();
         request.setAppid(wxPayProperties.getAppId());
         request.setMchid(wxPayProperties.getMerchantId());
@@ -57,6 +76,7 @@ public class WXNativeService {
         Transaction t = queryWXPayTradeByOutTradeNo(outTradeNo);
         WXTrade wxTrade = new WXTrade();
         wxTrade.prepayUpdate(t);
+        wxTrade.setCodeUrl(codeUrl);
         wXTradeRepository.save(wxTrade);
 
         return codeUrl;
@@ -127,16 +147,23 @@ public class WXNativeService {
      * @param outTradeNo 商户订单号
      */
     public void closeOrderByOutTradeNo(String outTradeNo) {
-        // TODO 商户查询订单状态，确保订单符合关闭条件。
-
         // 调用微信支付关闭订单接口，提交关闭订单请求。
-        // TODO 没有返回值，增加异常处理，可能会有异常？
         CloseOrderRequest closeRequest = new CloseOrderRequest();
         closeRequest.setMchid(wxPayProperties.getMerchantId());
         closeRequest.setOutTradeNo(outTradeNo);
         nativePayService.closeOrder(closeRequest); // 方法没有返回值，意味着成功时API返回204 No Content
 
-        // TODO 开发者或商户根据处理结果，进行相应的库存处理或服务取消操作。
+        // 再查询一下微信端的订单状态，如果是关闭的话，代表调用成功，更新本地数据库
+        Transaction t = queryWXPayTradeByOutTradeNo(outTradeNo);
+        if (t.getTradeState().equals(Transaction.TradeStateEnum.CLOSED)) {
+            WXTrade wxTrade = wXTradeRepository.findByOutTradeNo(outTradeNo);
+            wxTrade.setTradeState(t.getTradeState().name());
+            wxTrade.setTradeStateDesc(t.getTradeStateDesc());
+            wXTradeRepository.save(wxTrade);
+        } else {
+            // TODO 订单没有成功关闭，给出提示
+            log.warn("订单关闭失败：" + outTradeNo);
+        }
     }
 
     /**
@@ -172,12 +199,13 @@ public class WXNativeService {
         Transaction t = this.notificationParser.parse(requestParam, Transaction.class);
         log.info("notify body parse = {}", t);
 
-        // TODO 解析后更新本地订单数据
+        // 解析后更新本地订单数据
         WXTrade wxTrade = wXTradeRepository.findByOutTradeNo(t.getOutTradeNo());
         wxTrade.notificationUpdate(t);
         wXTradeRepository.save(wxTrade);
 
         // TODO 通知订阅方订单状态更新
+        // TODO 应该支持多种方式：HTTP、RPC、MQ、WebSocket
 
     }
 
