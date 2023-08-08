@@ -3,7 +3,9 @@ package com.spring4all.minipay.wxpay.service;
 import com.spring4all.minipay.exception.TradeIsClosedException;
 import com.spring4all.minipay.wxpay.WXPayConfig;
 import com.spring4all.minipay.wxpay.WXPayProperties;
+import com.spring4all.minipay.wxpay.dao.WXNotificationRepository;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
+import com.spring4all.minipay.wxpay.entity.WXNotification;
 import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.wechat.pay.java.core.exception.ServiceException;
 import com.wechat.pay.java.core.notification.NotificationParser;
@@ -17,7 +19,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class WXNativeService {
+
     private final WXTradeRepository wXTradeRepository;
+    private final WXNotificationRepository wxNotificationRepository;
 
     private WXPayProperties wxPayProperties;
     private NativePayService nativePayService;
@@ -25,14 +29,17 @@ public class WXNativeService {
 
 
     public WXNativeService(WXPayConfig wxPayConfig,
-                           WXTradeRepository wXTradeRepository) {
+                           WXTradeRepository wXTradeRepository,
+                           WXNotificationRepository wxNotificationRepository) {
         this.wxPayProperties = wxPayConfig.getWxPayProperties();
 
         this.nativePayService = new NativePayService.Builder().config(wxPayConfig.getConfig()).build();
         this.notificationParser = new NotificationParser(wxPayConfig.getConfig());
 
         log.info("微信支付配置初始化：成功！");
+
         this.wXTradeRepository = wXTradeRepository;
+        this.wxNotificationRepository = wxNotificationRepository;
     }
 
     public String preNativePay(String outTradeNo, String description, int totalFee) {
@@ -187,6 +194,16 @@ public class WXNativeService {
                                     String serialNumber, String nonce,
                                     String signature, String signatureType,
                                     String timestamp) {
+
+        WXNotification wxNotification = new WXNotification();
+        wxNotification.setBody(body);
+        wxNotification.setSerialNumber(serialNumber);
+        wxNotification.setNonce(nonce);
+        wxNotification.setSignature(signature);
+        wxNotification.setSignatureType(signatureType);
+        wxNotification.setTimestamp(timestamp);
+        wxNotification = wxNotificationRepository.save(wxNotification);
+
         // 验签、解密并转换成 Transaction
         RequestParam requestParam = new RequestParam.Builder()
                 .serialNumber(serialNumber)
@@ -199,6 +216,10 @@ public class WXNativeService {
         Transaction t = this.notificationParser.parse(requestParam, Transaction.class);
         log.info("notify body parse = {}", t);
 
+        wxNotification.setParse(t.toString());
+        wxNotification.setOutTradeNo(t.getOutTradeNo());
+        wxNotificationRepository.save(wxNotification);
+
         // 解析后更新本地订单数据
         WXTrade wxTrade = wXTradeRepository.findByOutTradeNo(t.getOutTradeNo());
         wxTrade.notificationUpdate(t);
@@ -206,7 +227,8 @@ public class WXNativeService {
 
         // TODO 通知订阅方订单状态更新
         // TODO 应该支持多种方式：HTTP、RPC、MQ、WebSocket
-
     }
+
+    // TODO 有时候支付回调没有成功，这个时候支付状态如何同步？
 
 }
