@@ -35,6 +35,8 @@ public class WXNativeService {
     }
 
     public String preNativePay(String outTradeNo, String description, int totalFee) {
+        // FIXME 现在有个问题，outTradeNo要唯一
+
         PrepayRequest request = new PrepayRequest();
         request.setAppid(wxPayProperties.getAppId());
         request.setMchid(wxPayProperties.getMerchantId());
@@ -52,7 +54,7 @@ public class WXNativeService {
         log.info("预支付 codeUrl = {}", codeUrl);
 
         // 查询微信支付的订单，获取完整信息，并存储到本地数据库
-        Transaction t = queryOrderByOutTradeNo(outTradeNo);
+        Transaction t = queryWXPayTradeByOutTradeNo(outTradeNo);
         WXTrade wxTrade = new WXTrade();
         wxTrade.prepayUpdate(t);
         wXTradeRepository.save(wxTrade);
@@ -81,7 +83,7 @@ public class WXNativeService {
      * @param outTradeNo
      * @return
      */
-    public Transaction queryOrderByOutTradeNo(String outTradeNo) {
+    public Transaction queryWXPayTradeByOutTradeNo(String outTradeNo) {
         QueryOrderByOutTradeNoRequest queryRequest = new QueryOrderByOutTradeNoRequest();
         queryRequest.setMchid(wxPayProperties.getMerchantId());
         queryRequest.setOutTradeNo(outTradeNo);
@@ -96,6 +98,17 @@ public class WXNativeService {
             log.error("reponse body={}", e.getResponseBody());
             throw e;
         }
+    }
+
+    /**
+     * 查询本地数据库保存的订单数据，用来与微信端核对当前状态是否一致
+     *
+     * @param outTradeNo
+     * @return
+     */
+    public WXTrade queryLocalTradeByOutTradeNo(String outTradeNo) {
+        WXTrade wxTrade = wXTradeRepository.findByOutTradeNo(outTradeNo);
+        return wxTrade;
     }
 
     /**

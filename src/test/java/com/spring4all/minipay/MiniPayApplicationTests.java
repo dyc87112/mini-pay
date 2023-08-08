@@ -33,8 +33,8 @@ class MiniPayApplicationTests {
     }
     @Test
     void queryOrderByOutTradeNo() {
-        wxNativeService.queryOrderByOutTradeNo("trade_no_1");
-        wxNativeService.queryOrderByOutTradeNo("trade_no_2");
+        wxNativeService.queryWXPayTradeByOutTradeNo("trade_no_1");
+        wxNativeService.queryWXPayTradeByOutTradeNo("trade_no_2");
     }
 
     @Test

@@ -1,8 +1,10 @@
 package com.spring4all.minipay.wxpay.controller;
 
 import com.spring4all.minipay.common.CommonResponse;
+import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
 import com.spring4all.minipay.wxpay.utils.QRCodeUtils;
+import com.wechat.pay.java.service.payments.model.Transaction;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -68,6 +70,20 @@ public class WXPayController extends WXPayBaseController {
         log.info("notify body: {}", body);
         wxNativeService.processNotification(body, serialNumber, nonce, signature, signatureType, timestamp);
         return "";
+    }
+
+    @GetMapping("/queryWXPayTrade")
+    public CommonResponse<Transaction> queryWXPayTrade(@RequestParam String outTradeNo) {
+        log.info("查询微信支付订单 outTradeNo: {}", outTradeNo);
+        Transaction t = wxNativeService.queryWXPayTradeByOutTradeNo(outTradeNo);
+        return new CommonResponse<>("200", "查询微信支付订单成功", t);
+    }
+
+    @GetMapping("/queryLocalTrade")
+    public CommonResponse<WXTrade> queryLocalTrade(@RequestParam String outTradeNo) {
+        log.info("查询本地支付订单 outTradeNo: {}", outTradeNo);
+        WXTrade t = wxNativeService.queryLocalTradeByOutTradeNo(outTradeNo);
+        return new CommonResponse<>("200", "查询本地订单成功", t);
     }
 
 }

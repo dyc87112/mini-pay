@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>支付测试页</title>
+    <script type="text/javascript" src="/js/jquery-3.7.0.min.js"></script>
+    <link href="/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/bootstrap/popper.min.js" ></script>
+    <script type="text/javascript" src="/bootstrap/bootstrap.min.js" ></script>
+</head>
+<style>
+
+</style>
+<body>
+<h1 style="text-align: center;">微信支付快捷测试</h1>
+<hr>
+<div class="container" style="width: 100%;">
+    <div class="row">
+        <div class="col">
+            <h2>第1步：预下单</h2>
+            <p>请求接口：/wxpay/prepay</p>
+            <p>请求类型：GET</p>
+            <p>URL参数：</p>
+            <table class="table">
+                <thead>
+                <th>参数名</th>
+                <th>参数值</th>
+                <th>参数说明</th>
+                </thead>
+                <tr>
+                    <td>outTradeNo：</td>
+                    <td><input id="outTradeNo" type="text" value="out_trade_no_1"/></td>
+                    <td>商户订单号</td>
+                </tr>
+                <tr>
+                    <td>description：</td>
+                    <td><input id="description" type="text" value="XX订单"/></td>
+                    <td>订单描述</td>
+                </tr>
+                <tr>
+                    <td>totalFee：</td>
+                    <td><input id="totalFee" type="text" value="1"/></td>
+                    <td>订单价格，单位：分</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <button type="button" onclick="prepay();">预下单</button>
+                    </td>
+                </tr>
+            </table>
+            <script type="text/javascript">
+                function prepay() {
+                    $.ajax({
+                        url: "/wxpay/prepay",
+                        type: "GET",
+                        data: {
+                            outTradeNo: $("#outTradeNo").val(),
+                            description: $("#description").val(),
+                            totalFee: $("#totalFee").val()
+                        },
+                        success: function (result) {
+                            console.log(JSON.stringify(result));
+                            const code = result["code"];
+                            const message = result["message"];
+                            const detail = result["detail"];
+                            if (code == 200 && detail != "") {
+                                alert("获取微信支付二维码 : " + detail);
+                                $("#codeUrl").val(detail);
+                            } else {
+                                alert(code + " : " + message);
+                            }
+                        },
+                        error: function (result) {
+                            alert(JSON.stringify(result));
+                        }
+                    });
+                }
+            </script>
+        </div>
+        <div class="col">
+            <h2>第2步：获取支付二维码</h2>
+            <p>调用接口：/wxpay/prepay</p>
+            <p>请求类型：GET</p>
+            <p>URL参数：</p>
+            <table class="table">
+                <thead>
+                <th>参数名</th>
+                <th>参数值</th>
+                <th>参数说明</th>
+                </thead>
+                <tr>
+                    <td>codeUrl：</td>
+                    <td><input id="codeUrl" type="text" style="width: 300px;"/></td>
+                    <td>第1步获取到的detail数据会直接填充</td>
+                </tr>
+                <tr>
+                    <td colspan="1">
+                        <button type="button" onclick="qrcode()">获取二维码</button>
+                    </td>
+                    <td>
+                        <img style="width: 200px;height: 200px;" src="/1.png" id="qrcode"/>
+                    </td>
+                </tr>
+            </table>
+            <script type="text/javascript">
+                function qrcode() {
+                    $("#qrcode").attr("src", "/wxpay/qrcode?codeUrl=" + $("#codeUrl").val());
+                    alert("扫描二维码，完成支付，并等待回调！")
+                }
+            </script>
+        </div>
+    </div>
+    <br><br><br>
+    <div class="row" >
+        <div class="col">
+            <h2>第3步：支付等待回调</h2>
+            outTradeNo：<input id="outTradeNo_query" type="text"/><br>
+            <button type="button" onclick="queryLocalTrade()">查询本地端数据</button><br>
+            本地端数据：<label id="local-trade"></label><br>
+            <button type="button" onclick="queryWXPayTrade()">查询微信端数据</button><br>
+            微信端数据：<label id="wxpay-trade"></label><br>
+            <script type="text/javascript">
+                function queryWXPayTrade() {
+                    $.ajax({
+                        url: "/wxpay/queryWXPayTrade",
+                        type: "GET",
+                        data: {
+                            outTradeNo: $("#outTradeNo_query").val(),
+                        },
+                        success: function (result) {
+                            console.log(JSON.stringify(result));
+                            const code = result["code"];
+                            const message = result["message"];
+                            const detail = result["detail"];
+                            if (code == 200 && detail != "") {
+                                $("#wxpay-trade").html(
+                                    "outTradeNo=" +  detail["outTradeNo"] +
+                                    ", tradeState=" +  detail["tradeState"] +
+                                    ", tradeStateDesc=" +  detail["tradeStateDesc"] +
+                                    ", transactionId=" +  detail["transactionId"]
+                                );
+                            } else {
+                                alert(code + " : " + message);
+                            }
+                        },
+                        error: function (result) {
+                            alert(JSON.stringify(result));
+                        }
+                    });
+                }
+
+                function queryLocalTrade() {
+                    $.ajax({
+                        url: "/wxpay/queryLocalTrade",
+                        type: "GET",
+                        data: {
+                            outTradeNo: $("#outTradeNo_query").val(),
+                        },
+                        success: function (result) {
+                            console.log(JSON.stringify(result));
+                            const code = result["code"];
+                            const message = result["message"];
+                            const detail = result["detail"];
+                            if (code == 200 && detail != "") {
+                                $("#wxpay-trade").html(
+                                    "outTradeNo=" +  detail["outTradeNo"] +
+                                    ", tradeState=" +  detail["tradeState"] +
+                                    ", tradeStateDesc=" +  detail["tradeStateDesc"] +
+                                    ", transactionId=" +  detail["transactionId"]
+                                );
+                            } else {
+                                alert(code + " : " + message);
+                            }
+                        },
+                        error: function (result) {
+                            alert(JSON.stringify(result));
+                        }
+                    });
+                }
+            </script>
+        </div>
+    </div>
+</div>
+
+</body>
+
+
+</html>
