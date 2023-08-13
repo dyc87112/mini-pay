@@ -84,12 +84,7 @@ public class WXPayController extends WXPayBaseController {
     public CommonResponse<Transaction> queryWXPayTrade(@RequestParam String outTradeNo) {
         log.info("查询微信支付订单 outTradeNo: {}", outTradeNo);
         Transaction t = wxNativeService.queryWXPayTradeByOutTradeNo(outTradeNo);
-        WXTrade trade = wXTradeRepository.findByOutTradeNo(outTradeNo);
-        if (trade.getTradeState().equals(t.getTradeState().name())) {
-            return new CommonResponse<>("200", "查询成功：订单状态一致", t);
-        }
-        return new CommonResponse<>("200", "查询成功：订单状态不一致", t);
-        // TODO 如果支付状态不一致的时候，更新本地状态，同时要通知使用方
+        return new CommonResponse<>("200", "查询成功：" + outTradeNo, t);
     }
 
     @GetMapping("/queryLocalTrade")

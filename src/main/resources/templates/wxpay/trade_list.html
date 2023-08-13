@@ -18,6 +18,8 @@
         <th>应用ID</th>
         <th>金额</th>
         <th>订单状态</th>
+        <th>创建时间</th>
+        <th>支付时间</th>
         <th>操作</th>
     </thead>
     <tr th:each="trade, iterStat : ${page.content}">
@@ -27,6 +29,8 @@
         <td th:text="${trade.appid}"></td>
         <td th:text="${trade.total}"></td>
         <td th:text="${trade.tradeStateDesc}"></td>
+        <td th:text="${trade.createTime}"></td>
+        <td th:text="${trade.successTime}"></td>
         <td>
             <a target="_blank" th:href="@{/trade-detail(outTradeNo=${trade.outTradeNo})}">查看详细</a>
         </td>
