@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.MessageFormat;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MiniPayApplicationTests {
 
@@ -16,19 +18,17 @@ class MiniPayApplicationTests {
     private WXTradeRepository wxTradeRepository;
 
     @Test
-    void wxtrade() {
+    void wxTradeRepository() {
         WXTrade trade = new WXTrade();
         trade.setAppid("111");
         wxTradeRepository.save(trade);
-
-
     }
 
     @Test
     void preNativePay() {
         // 商户订单已存在的异常
-//        wxNativeService.preNativePay("trade_no_1", "测试商品", 1);
-        // TODO 获取二维码
+        // wxNativeService.preNativePay("trade_no_1", "测试商品", 1);
+        // 获取二维码
         wxNativeService.preNativePay("trade_no_3", "测试商品", 1);
     }
     @Test

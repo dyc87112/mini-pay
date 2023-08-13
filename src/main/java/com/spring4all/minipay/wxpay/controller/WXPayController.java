@@ -1,6 +1,7 @@
 package com.spring4all.minipay.wxpay.controller;
 
 import com.spring4all.minipay.common.CommonResponse;
+import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
 import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
 import com.spring4all.minipay.wxpay.utils.QRCodeUtils;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/wxpay")
 @AllArgsConstructor
 public class WXPayController extends WXPayBaseController {
+    private final WXTradeRepository wXTradeRepository;
 
     private WXNativeService wxNativeService;
 
@@ -72,11 +74,22 @@ public class WXPayController extends WXPayBaseController {
         return "";
     }
 
+    /**
+     * 查询微信支付订单状态，并更新本地状态
+     *
+     * @param outTradeNo
+     * @return
+     */
     @GetMapping("/queryWXPayTrade")
     public CommonResponse<Transaction> queryWXPayTrade(@RequestParam String outTradeNo) {
         log.info("查询微信支付订单 outTradeNo: {}", outTradeNo);
         Transaction t = wxNativeService.queryWXPayTradeByOutTradeNo(outTradeNo);
-        return new CommonResponse<>("200", "查询微信支付订单成功", t);
+        WXTrade trade = wXTradeRepository.findByOutTradeNo(outTradeNo);
+        if (trade.getTradeState().equals(t.getTradeState().name())) {
+            return new CommonResponse<>("200", "查询成功：订单状态一致", t);
+        }
+        return new CommonResponse<>("200", "查询成功：订单状态不一致", t);
+        // TODO 如果支付状态不一致的时候，更新本地状态，同时要通知使用方
     }
 
     @GetMapping("/queryLocalTrade")

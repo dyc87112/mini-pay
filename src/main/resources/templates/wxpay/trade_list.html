@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信支付订单列表</title>
+    <script type="text/javascript" src="/js/jquery-3.7.0.min.js"></script>
+    <link href="/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/bootstrap/popper.min.js"></script>
+    <script type="text/javascript" src="/bootstrap/bootstrap.min.js"></script>
+</head>
+<body>
+<h1>微信订单查询</h1>
+<table class="table table-striped">
+    <thead>
+        <th>#</th>
+        <th>商户订单号</th>
+        <th>商户ID</th>
+        <th>应用ID</th>
+        <th>金额</th>
+        <th>订单状态</th>
+        <th>操作</th>
+    </thead>
+    <tr th:each="trade, iterStat : ${page.content}">
+        <td th:text="${iterStat.count}">1</td>
+        <td th:text="${trade.outTradeNo}"></td>
+        <td th:text="${trade.mchid}"></td>
+        <td th:text="${trade.appid}"></td>
+        <td th:text="${trade.total}"></td>
+        <td th:text="${trade.tradeStateDesc}"></td>
+        <td>
+            <a target="_blank" th:href="@{/trade-detail(outTradeNo=${trade.outTradeNo})}">查看详细</a>
+        </td>
+    </tr>
+</table>
+<br>
+<a th:href="@{/trade-list(page=${page.number}-1)}" class="  item" th:unless="${page.first}">上一页</a>
+<a th:href="@{/trade-list(page=${page.number}+1)}" class=" item" th:unless="${page.last}">下一页</a>
+</body>
+
+
+
+</html>
