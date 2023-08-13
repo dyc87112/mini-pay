@@ -42,3 +42,4 @@ build/
 
 ## log
 *.log
+*.log*.gz
