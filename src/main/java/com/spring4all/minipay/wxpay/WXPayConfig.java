@@ -1,8 +1,6 @@
 package com.spring4all.minipay.wxpay;
 
-import com.wechat.pay.java.core.Config;
 import com.wechat.pay.java.core.RSAAutoCertificateConfig;
-import com.wechat.pay.java.core.notification.NotificationParser;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

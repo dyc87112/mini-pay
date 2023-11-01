@@ -43,3 +43,4 @@ build/
 ## log
 *.log
 *.log*.gz
+/src/main/resources/static/tabler/demo/
