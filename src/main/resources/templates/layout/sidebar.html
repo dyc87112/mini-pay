@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+
+    </style>
+</head>
 <body>
 <!-- 侧边菜单 -->
 <div th:fragment="sidebar">
@@ -11,11 +16,13 @@
         <ul class="navbar-nav pt-lg-3">
             <li class="nav-item">
                 <a class="nav-link" href="/dashboard" >
+                    <i class="bi bi-speedometer2" style="margin-right: 10px;"></i>
                     <span class="nav-link-title">Dashboard</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#navbar-base">
+                    <i class="bi bi-wechat" style="margin-right: 10px;"></i>
                     <span class="nav-link-title">微信支付</span>
                 </a>
                 <div class="dropdown-menu show">
@@ -29,6 +36,7 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#navbar-extra">
+                    <i class="bi bi-alipay" style="margin-right: 10px;"></i>
                     <span class="nav-link-title">支付宝</span>
                 </a>
                 <div class="dropdown-menu show">

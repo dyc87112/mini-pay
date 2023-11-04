@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.MessageFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MiniPayApplicationTests {
@@ -23,6 +26,8 @@ class MiniPayApplicationTests {
         trade.setAppid("111");
         wxTradeRepository.save(trade);
     }
+
+
 
     @Test
     void preNativePay() {

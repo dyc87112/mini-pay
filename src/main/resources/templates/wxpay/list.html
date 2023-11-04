@@ -1,3 +1,23 @@
+<style>
+    .badge[data-value="SUCCESS"] {
+        color: var(--tblr-green-fg)!important;
+        --tblr-bg-opacity: 1;
+        background-color: rgba(var(--tblr-green-rgb),var(--tblr-bg-opacity))!important;
+    }
+
+    .badge[data-value="NOTPAY"] {
+        color: var(--tblr-azure-fg)!important;
+        --tblr-bg-opacity: 1;
+        background-color: rgba(var(--tblr-azure-rgb),var(--tblr-bg-opacity))!important;
+    }
+
+    .badge[data-value="PAYERROR"] {
+        color: var(--tblr-red-fg)!important;
+        --tblr-bg-opacity: 1;
+        background-color: rgba(var(--tblr-red-rgb),var(--tblr-bg-opacity))!important;
+    }
+</style>
+
 <table class="table table-striped">
     <thead>
         <th>#</th>
@@ -16,7 +36,10 @@
         <td th:text="${trade.mchid}"></td>
         <td th:text="${trade.appid}"></td>
         <td th:text="${trade.total}"></td>
-        <td th:text="${trade.tradeStateDesc}"></td>
+        <td>
+            <span class="badge" th:text="${trade.tradeStateDesc}"
+                  th:data-value="${trade.tradeState}">Green</span>
+        </td>
         <td th:text="${trade.createTime}"></td>
         <td th:text="${trade.successTime}"></td>
         <td>

@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/js/jquery-3.7.0.min.js"></script>
 <div class="container">
     <div class="row">
         <div class="col-6">
@@ -43,6 +44,28 @@
             </table>
         </div>
     </div>
+    <div class="row">
+        <div class="col-3" style="margin-bottom: 20px;">
+            <input id="outTradeNo" th:value="${wxTrade.outTradeNo}" hidden="hidden">
+            <button onclick="update()" class="btn btn-info">Update</button>
+        </div>
+    </div>
 </div>
-</body>
-</html>
+
+<script type="text/javascript">
+    function update() {
+        $.ajax({
+            url: "/api/wxpay/queryTrade",
+            type: "GET",
+            data: {
+                outTradeNo: $("#outTradeNo").val(),
+            },
+            success: function (result) {
+                alert(JSON.stringify(result));
+            },
+            error: function (result) {
+                alert(JSON.stringify(result));
+            }
+        });
+    }
+</script>
