@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.spring4all.minipay.admin.controller.PageLayout.page_layout_1;
+
 @AllArgsConstructor
 @Controller
 @Slf4j
@@ -29,7 +31,7 @@ public class WXTradeController {
         model.addAttribute("page_title", "流程测试");
         model.addAttribute("page_pretitle", "微信支付");
         model.addAttribute("content", "wxpay/test");
-        return "layout/layout";
+        return page_layout_1;
     }
 
     @GetMapping("/list")
@@ -39,14 +41,17 @@ public class WXTradeController {
         model.addAttribute("page_title", "订单列表");
         model.addAttribute("page_pretitle", "微信支付");
         model.addAttribute("content", "wxpay/list");
-        return "layout/layout";
+        return page_layout_1;
     }
 
     @GetMapping("/detail")
     public String tradeDetail(@RequestParam("outTradeNo") String outTradeNo, Model model) {
+        model.addAttribute("page_title", "订单详情");
+        model.addAttribute("page_pretitle", "微信支付");
+        model.addAttribute("content", "wxpay/detail");
         model.addAttribute("wxTrade", wxNativeService.queryLocalTradeByOutTradeNo(outTradeNo));
         model.addAttribute("wxTransaction", wxNativeService.queryWXPayTradeByOutTradeNo(outTradeNo));
-        return "wxpay/detail";
+        return page_layout_1;
     }
 
 }
