@@ -1,4 +1,4 @@
-package com.spring4all.minipay.wxpay.controller;
+package com.spring4all.minipay.wxpay.api;
 
 import com.spring4all.minipay.common.CommonResponse;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Data
 @Slf4j
 @RestController
-@RequestMapping("/wxpay")
+@RequestMapping("/api/wxpay")
 @AllArgsConstructor
 public class WXPayController extends WXPayBaseController {
     private final WXTradeRepository wXTradeRepository;

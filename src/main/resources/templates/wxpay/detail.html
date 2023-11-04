@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>微信支付订单详情</title>
     <script type="text/javascript" src="/js/jquery-3.7.0.min.js"></script>
-    <link href="/bootstrap/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="/bootstrap/popper.min.js"></script>
     <script type="text/javascript" src="/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/bootstrap/bootstrap.min.css">
 </head>
 <body>
 <div class="container">
@@ -43,11 +43,11 @@
                 <tr><td>tradeStateDesc</td><td th:text="${wxTransaction.tradeStateDesc}"></td></tr>
                 <tr><td>tradeType</td><td th:text="${wxTransaction.tradeType}"></td></tr>
                 <tr><td>transactionId</td><td th:text="${wxTransaction.transactionId}"></td></tr>
-                <tr><td>currency</td><td th:text="${wxTransaction.amount.currency}"></td></tr>
-                <tr><td>total</td><td th:text="${wxTransaction.amount.total}"></td></tr>
-                <tr><td>payerCurrency</td><td th:text="${wxTransaction.amount.payerCurrency}"></td></tr>
-                <tr><td>payerTotal</td><td th:text="${wxTransaction.amount.payerTotal}"></td></tr>
-                <tr><td>payerOpenId</td><td th:text="${wxTransaction.payer.openid}"></td></tr>
+                <tr><td>currency</td><td th:text="${wxTransaction.amount?.currency}"></td></tr>
+                <tr><td>total</td><td th:text="${wxTransaction.amount?.total}"></td></tr>
+                <tr><td>payerCurrency</td><td th:text="${wxTransaction.amount?.payerCurrency}"></td></tr>
+                <tr><td>payerTotal</td><td th:text="${wxTransaction.amount?.payerTotal}"></td></tr>
+                <tr><td>payerOpenId</td><td th:text="${wxTransaction.payer?.openid}"></td></tr>
                 <tr><td>bankType</td><td th:text="${wxTransaction.bankType}"></td></tr>
                 <tr><td>attach</td><td th:text="${wxTransaction.attach}"></td></tr>
                 <tr><td>successTime</td><td th:text="${wxTransaction.successTime}"></td></tr>

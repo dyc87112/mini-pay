@@ -1,4 +1,4 @@
-package com.spring4all.minipay.wxpay.controller;
+package com.spring4all.minipay.wxpay.api;
 
 import com.spring4all.minipay.common.CommonResponse;
 import com.spring4all.minipay.exception.TradeIsClosedException;
@@ -14,12 +14,13 @@ public class WXPayBaseController {
 
     @ExceptionHandler(value = TradeIsClosedException.class)
     public CommonResponse wxPayServiceException(TradeIsClosedException e) {
+        log.error(e.getMessage(), e);
         return new CommonResponse(e.getErrorCode(), e.getErrorMessage(), null);
     }
 
-
     @ExceptionHandler(value = ServiceException.class)
     public CommonResponse wxPayServiceException(ServiceException e) {
+        log.error(e.getMessage(), e);
         return new CommonResponse(e.getErrorCode(), e.getErrorMessage(), e.getResponseBody());
     }
 
