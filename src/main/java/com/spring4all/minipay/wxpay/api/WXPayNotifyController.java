@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @Data
 @Slf4j
 @RestController
-@RequestMapping("/wxpay")
 @AllArgsConstructor
 public class WXPayNotifyController extends WXPayBaseController {
 
@@ -19,10 +18,12 @@ public class WXPayNotifyController extends WXPayBaseController {
     private WXNativeService wxNativeService;
 
     /**
+     * 微信支付的回调处理
+     *
      * @param body
      * @return
      */
-    @PostMapping("/notify")
+    @PostMapping("/wxpay/notify")
     public String notify(@RequestBody String body,
                          @RequestHeader("Wechatpay-Serial") String serialNumber,
                          @RequestHeader("Wechatpay-Nonce") String nonce,
