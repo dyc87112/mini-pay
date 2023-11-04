@@ -10,193 +10,33 @@
 <div class="container" style="width: 100%;">
     <div class="row">
         <div class="col">
-            <h2>第1步：预下单</h2>
-            <p>请求接口：/wxpay/prepay</p>
-            <p>请求类型：GET</p>
-            <p>URL参数：</p>
-            <table class="table">
-                <thead>
-                <th>参数名</th>
-                <th>参数值</th>
-                <th>参数说明</th>
-                </thead>
-                <tr>
-                    <td>outTradeNo：</td>
-                    <td><input id="outTradeNo" type="text" value="out_trade_no_1"/></td>
-                    <td>商户订单号</td>
-                </tr>
-                <tr>
-                    <td>description：</td>
-                    <td><input id="description" type="text" value="XX订单"/></td>
-                    <td>订单标题</td>
-                </tr>
-                <tr>
-                    <td>totalFee：</td>
-                    <td><input id="totalFee" type="text" value="1"/></td>
-                    <td>订单价格，单位：分</td>
-                </tr>
-                <tr>
-                    <td colspan="3">
-                        <button type="button" onclick="prepay();">预下单</button>
-                    </td>
-                </tr>
-            </table>
-            <p>返回数据：</p>
-            <p id="prepay-result" style="color: red;"></p>
-            <script type="text/javascript">
-                function prepay() {
-                    $.ajax({
-                        url: "/api/wxpay/prepay",
-                        type: "GET",
-                        data: {
-                            outTradeNo: $("#outTradeNo").val(),
-                            description: $("#description").val(),
-                            totalFee: $("#totalFee").val()
-                        },
-                        success: function (result) {
-                            $("#prepay-result").html(JSON.stringify(result));
-                            const code = result["code"];
-                            const message = result["message"];
-                            const detail = result["detail"];
-                            if (code == 200 && detail != "") {
-                                // 联动设置接下来要用的数据
-                                $("#codeUrl").val(detail);
-                                $("#qrcode").attr("src", "/api/wxpay/qrcode?codeUrl=" + $("#codeUrl").val());
-                                $("#outTradeNo_query").val($("#outTradeNo").val());
-                                $("#outTradeNo_close").val($("#outTradeNo").val());
-                            }
-                        },
-                        error: function (result) {
-                            $("#prepay-result").html(JSON.stringify(result));
-                        }
-                    });
-                }
-            </script>
+            <!-- 第1步：预下单 -->
+            <div th:replace="wxpay/test-s1 :: step-1"></div>
         </div>
     </div>
     <hr>
     <div class="row">
         <div class="col">
-            <h2>第2步：获取支付二维码</h2>
-            <p>调用接口：/wxpay/prepay</p>
-            <p>请求类型：GET</p>
-            <p>URL参数：</p>
-            <table class="table">
-                <thead>
-                <th>参数名</th>
-                <th>参数值</th>
-                <th>参数说明</th>
-                </thead>
-                <tr>
-                    <td>codeUrl：</td>
-                    <td><input id="codeUrl" type="text" style="width: 300px;"/></td>
-                    <td>第1步获取到的detail数据会直接填充</td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <img style="width: 200px;height: 200px;" src="/1.png" id="qrcode"/>
-                    </td>
-                    <td>
-                        <button type="button" onclick="qrcode()">获取二维码</button>
-                    </td>
-                </tr>
-            </table>
-            <script type="text/javascript">
-                function qrcode() {
-                    $("#qrcode").attr("src", "/api/wxpay/qrcode?codeUrl=" + $("#codeUrl").val());
-                    alert("扫描二维码，完成支付，并等待回调！")
-                }
-            </script>
+            <!-- 第2步：获取支付二维码 -->
+            <div th:replace="wxpay/test-s2 :: step-2"></div>
         </div>
     </div>
     <hr>
     <div class="row">
         <div class="col">
-            <h2>第3步：等待支付回调</h2>
-            <div style="margin: 20px">
-                outTradeNo：<input id="outTradeNo_query" type="text"/>
-            </div>
-            <table class="table">
-                <tr>
-                    <td style="width: 100px;">
-                        <button type="button" onclick="queryLocalTrade()">查询</button>
-                    </td>
-                    <td>本地端数据：</td>
-                    <td><label id="local-trade"></label></td>
-                </tr>
-                <tr>
-                    <td>
-                        <button type="button" onclick="queryWXPayTrade()">查询</button>
-                    </td>
-                    <td>微信端数据：</td>
-                    <td><label id="wxpay-trade"></label></td>
-                </tr>
-            </table>
-            <script type="text/javascript">
-                function queryWXPayTrade() {
-                    $.ajax({
-                        url: "/api/wxpay/queryWXPayTrade",
-                        type: "GET",
-                        data: {
-                            outTradeNo: $("#outTradeNo_query").val(),
-                        },
-                        success: function (result) {
-                            console.log(JSON.stringify(result));
-                            const code = result["code"];
-                            const message = result["message"];
-                            const detail = result["detail"];
-                            if (code == 200 && detail != "") {
-                                $("#wxpay-trade").html(
-                                    "outTradeNo=" + detail["outTradeNo"] +
-                                    ", tradeState=" + detail["tradeState"] +
-                                    ", tradeStateDesc=" + detail["tradeStateDesc"] +
-                                    ", transactionId=" + detail["transactionId"]
-                                );
-                            } else {
-                                alert(code + " : " + message);
-                            }
-                        },
-                        error: function (result) {
-                            alert(JSON.stringify(result));
-                        }
-                    });
-                }
-
-                function queryLocalTrade() {
-                    $.ajax({
-                        url: "/api/wxpay/queryLocalTrade",
-                        type: "GET",
-                        data: {
-                            outTradeNo: $("#outTradeNo_query").val(),
-                        },
-                        success: function (result) {
-                            console.log(JSON.stringify(result));
-                            const code = result["code"];
-                            const message = result["message"];
-                            const detail = result["detail"];
-                            if (code == 200 && detail != "") {
-                                $("#local-trade").html(
-                                    "outTradeNo=" + detail["outTradeNo"] +
-                                    ", tradeState=" + detail["tradeState"] +
-                                    ", tradeStateDesc=" + detail["tradeStateDesc"] +
-                                    ", transactionId=" + detail["transactionId"]
-                                );
-                            } else {
-                                alert(code + " : " + message);
-                            }
-                        },
-                        error: function (result) {
-                            alert(JSON.stringify(result));
-                        }
-                    });
-                }
-            </script>
+            <!-- 第3步：等待支付回调 -->
+            <div th:replace="wxpay/test-s3 :: step-3"></div>
         </div>
     </div>
 
     <div class="row">
         <h2>其他操作</h2>
         <div style="margin: 20px">
+            <h3>关闭订单</h3>
+            <p>调用时机：定时任务，超过15分钟没完成的订单，调用这个接口关闭订单</p>
+            <p>调用接口：/api/wxpay/closeTrade</p>
+            <p>请求类型：GET</p>
+            <p>URL参数：</p>
             outTradeNo：<input id="outTradeNo_close" type="text"/>
             <button type="button" onclick="closeTrade()">关闭订单</button>
         </div>

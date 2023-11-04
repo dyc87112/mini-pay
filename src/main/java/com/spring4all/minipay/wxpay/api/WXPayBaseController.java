@@ -1,7 +1,7 @@
 package com.spring4all.minipay.wxpay.api;
 
 import com.spring4all.minipay.common.CommonResponse;
-import com.spring4all.minipay.exception.TradeIsClosedException;
+import com.spring4all.minipay.exception.TradeException;
 import com.wechat.pay.java.core.exception.HttpException;
 import com.wechat.pay.java.core.exception.MalformedMessageException;
 import com.wechat.pay.java.core.exception.ServiceException;
@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class WXPayBaseController {
 
-    @ExceptionHandler(value = TradeIsClosedException.class)
-    public CommonResponse wxPayServiceException(TradeIsClosedException e) {
-        log.error(e.getMessage(), e);
+    @ExceptionHandler(value = {
+            TradeException.class,
+    })
+    public CommonResponse wxPayServiceException(TradeException e) {
+        log.error(e.getErrorMessage(), e);
         return new CommonResponse(e.getErrorCode(), e.getErrorMessage(), null);
     }
 

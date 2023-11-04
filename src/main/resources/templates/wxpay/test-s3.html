@@ -1,0 +1,82 @@
+<div th:fragment="step-3">
+    <h2>第3步：等待支付回调</h2>
+    <p>使用方轮训接口来查询订单状态</p>
+    <p>调用接口：/api/wxpay/queryWXPayTrade</p>
+    <p>请求类型：GET</p>
+    <p>请求参数：outTradeNo：<input id="outTradeNo_query" type="text"/></p>
+    <table class="table">
+        <tr>
+            <td style="width: 100px;">
+                <button type="button" onclick="queryLocalTrade()">查询</button>
+            </td>
+            <td>本地端数据：</td>
+            <td><label id="local-trade"></label></td>
+        </tr>
+        <tr>
+            <td>
+                <button type="button" onclick="queryWXPayTrade()">查询</button>
+            </td>
+            <td>微信端数据：</td>
+            <td><label id="wxpay-trade"></label></td>
+        </tr>
+    </table>
+    <script type="text/javascript">
+        function queryWXPayTrade() {
+            $.ajax({
+                url: "/api/wxpay/queryWXPayTrade",
+                type: "GET",
+                data: {
+                    outTradeNo: $("#outTradeNo_query").val(),
+                },
+                success: function (result) {
+                    console.log(JSON.stringify(result));
+                    const code = result["code"];
+                    const message = result["message"];
+                    const detail = result["detail"];
+                    if (code == 200 && detail != "") {
+                        $("#wxpay-trade").html(
+                            "outTradeNo=" + detail["outTradeNo"] +
+                            ", tradeState=" + detail["tradeState"] +
+                            ", tradeStateDesc=" + detail["tradeStateDesc"] +
+                            ", transactionId=" + detail["transactionId"]
+                        );
+                    } else {
+                        alert(code + " : " + message);
+                    }
+                },
+                error: function (result) {
+                    alert(JSON.stringify(result));
+                }
+            });
+        }
+
+        function queryLocalTrade() {
+            $.ajax({
+                url: "/api/wxpay/queryLocalTrade",
+                type: "GET",
+                data: {
+                    outTradeNo: $("#outTradeNo_query").val(),
+                },
+                success: function (result) {
+                    console.log(JSON.stringify(result));
+                    const code = result["code"];
+                    const message = result["message"];
+                    const detail = result["detail"];
+                    if (code == 200 && detail != "") {
+                        $("#local-trade").html(
+                            "outTradeNo=" + detail["outTradeNo"] +
+                            ", tradeState=" + detail["tradeState"] +
+                            ", tradeStateDesc=" + detail["tradeStateDesc"] +
+                            ", transactionId=" + detail["transactionId"]
+                        );
+                    } else {
+                        alert(code + " : " + message);
+                    }
+                },
+                error: function (result) {
+                    alert(JSON.stringify(result));
+                }
+            });
+        }
+    </script>
+</div>

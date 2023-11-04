@@ -3,9 +3,11 @@ package com.spring4all.minipay.exception;
 import lombok.Data;
 
 @Data
-public class TradeIsClosedException extends RuntimeException {
+public class TradeIsClosedException extends TradeException {
 
-    private String errorCode = "500";
-    private String errorMessage = "支付订单已经关闭";
+    public TradeIsClosedException() {
+        this.errorCode = "500";
+        this.errorMessage = "支付订单已经关闭";
+    }
 
 }

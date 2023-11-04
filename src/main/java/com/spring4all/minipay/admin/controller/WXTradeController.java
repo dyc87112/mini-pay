@@ -33,7 +33,7 @@ public class WXTradeController {
     }
 
     @GetMapping("/list")
-    public String tradeList(@PageableDefault(size = 30, sort = {"outTradeNo"},
+    public String tradeList(@PageableDefault(size = 30, sort = {"createTime"},
             direction = Sort.Direction.DESC) Pageable pageable, Model model) {
         model.addAttribute("page", wxTradeQueryRepository.findAll(pageable));
         model.addAttribute("page_title", "订单列表");
