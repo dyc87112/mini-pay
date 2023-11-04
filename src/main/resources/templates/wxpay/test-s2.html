@@ -1,6 +1,6 @@
 <div th:fragment="step-2">
     <h2>第2步：获取支付二维码</h2>
-    <p>调用接口：/api/wxpay/prepay</p>
+    <p>调用接口：/api/wxpay/qrcode</p>
     <p>请求类型：GET</p>
     <p>URL参数：</p>
     <table class="table">
@@ -16,7 +16,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <img style="width: 200px;height: 200px;" src="/1.png" id="qrcode"/>
+                <img id="qrcode" style="width: 200px;height: 200px;" src="" />
             </td>
             <td>
                 <button type="button" onclick="qrcode()">获取二维码</button>
