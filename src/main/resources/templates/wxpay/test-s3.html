@@ -1,7 +1,7 @@
 <div th:fragment="step-3">
     <h2>第3步：等待支付回调</h2>
-    <p>使用方轮训接口来查询订单状态</p>
-    <p>调用接口：/api/wxpay/queryLocalTrade</p>
+    <p>轮训或者支付页面给一个“支付成功/支付查询”按钮来获取最新状态</p>
+    <p>调用接口：/api/wxpay/queryTrade</p>
     <p>请求类型：GET</p>
     <p>请求参数：outTradeNo：<input id="outTradeNo_query" type="text"/></p>
     <table class="table">
