@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.spring4all</groupId>
     <artifactId>mini-pay</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>mini-pay</name>
     <description>mini-pay</description>
     <properties>
