@@ -46,7 +46,9 @@
             <a target="_blank" th:href="@{./detail(outTradeNo=${trade.outTradeNo})}">详细</a>
         </td>
     </tr>
+    <tfoot>
+      <a th:href="@{./list(page=${page.number}-1)}" class="item" th:unless="${page.first}">上一页</a>
+      <a th:href="@{./list(page=${page.number}+1)}" class="item" th:unless="${page.last}">下一页</a>
+    </tfoot>
 </table>
 <br>
-<a th:href="@{/trade-list(page=${page.number}-1)}" class="  item" th:unless="${page.first}">上一页</a>
-<a th:href="@{/trade-list(page=${page.number}+1)}" class=" item" th:unless="${page.last}">下一页</a>
