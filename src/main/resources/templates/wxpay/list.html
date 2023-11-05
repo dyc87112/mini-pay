@@ -18,6 +18,19 @@
     }
 </style>
 
+<div class="col-12">
+    <div class="card">
+        <div class="card-body">
+            <div class="badges-list">
+                <a th:href="@{./list(tradeState=NOTPAY)}"><span class="badge bg-azure-lt">NOTPAY</span></a>
+                <a th:href="@{./list(tradeState=SUCCESS)}"><span class="badge bg-green-lt">SUCCESS</span></a>
+                <a th:href="@{./list(tradeState=PAYERROR)}"><span class="badge bg-red-lt">PAYERROR</span></a>
+                <a th:href="@{./list(tradeState=CLOSED)}"><span class="badge">CLOSED</span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <table class="table table-striped">
     <thead>
         <th>#</th>
@@ -46,9 +59,9 @@
             <a target="_blank" th:href="@{./detail(outTradeNo=${trade.outTradeNo})}">详细</a>
         </td>
     </tr>
-    <tfoot>
-      <a th:href="@{./list(page=${page.number}-1)}" class="item" th:unless="${page.first}">上一页</a>
-      <a th:href="@{./list(page=${page.number}+1)}" class="item" th:unless="${page.last}">下一页</a>
-    </tfoot>
 </table>
+<div class="card-body">
+    <a th:href="@{./list(page=${page.number}-1, tradeState=${tradeState})}" class="item" th:unless="${page.first}">上一页</a>
+    <a th:href="@{./list(page=${page.number}+1, tradeState=${tradeState})}" class="item" th:unless="${page.last}">下一页</a>
+</div>
 <br>

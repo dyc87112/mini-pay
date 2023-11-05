@@ -1,11 +1,13 @@
 package com.spring4all.minipay;
 
+import com.spring4all.minipay.wxpay.dao.WXTradeQueryRepository;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
 import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 
 import java.text.MessageFormat;
 import java.text.ParsePosition;
@@ -19,15 +21,14 @@ class MiniPayApplicationTests {
     private WXNativeService wxNativeService;
     @Autowired
     private WXTradeRepository wxTradeRepository;
+    @Autowired
+    private WXTradeQueryRepository wxTradeQueryRepository;
 
     @Test
     void wxTradeRepository() {
-        WXTrade trade = new WXTrade();
-        trade.setAppid("111");
-        wxTradeRepository.save(trade);
+        Pageable pageable = Pageable.unpaged();
+         wxTradeQueryRepository.findAllByTradeStateIsNot("CLOSED", pageable);
     }
-
-
 
     @Test
     void preNativePay() {

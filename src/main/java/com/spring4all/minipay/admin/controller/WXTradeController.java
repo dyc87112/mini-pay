@@ -35,9 +35,14 @@ public class WXTradeController {
     }
 
     @GetMapping("/list")
-    public String tradeList(@PageableDefault(size = 30, sort = {"createTime"},
-            direction = Sort.Direction.DESC) Pageable pageable, Model model) {
-        model.addAttribute("page", wxTradeQueryRepository.findAll(pageable));
+    public String tradeList(@PageableDefault(size = 20, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable,
+                            @RequestParam(required = false) String tradeState, Model model) {
+        if (tradeState == null) {
+            model.addAttribute("page", wxTradeQueryRepository.findAllByTradeStateIsNot("CLOSED", pageable));
+        } else {
+            model.addAttribute("page", wxTradeQueryRepository.findAllByTradeStateEquals(tradeState, pageable));
+        }
+        model.addAttribute("tradeState", tradeState);
         model.addAttribute("page_title", "订单列表");
         model.addAttribute("page_pretitle", "微信支付");
         model.addAttribute("content", "wxpay/list");
