@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "wxpay")
 public class WXPayProperties {
 
-    private final static String notifyPath = "/wxpay/notify";
+    private final static String notifyPath = "/notify/wxpay";
 
     private String appId;
     private String merchantId;

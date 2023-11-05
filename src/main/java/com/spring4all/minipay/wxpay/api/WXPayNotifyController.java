@@ -23,7 +23,7 @@ public class WXPayNotifyController extends WXPayBaseController {
      * @param body
      * @return
      */
-    @PostMapping("/wxpay/notify")
+    @PostMapping("/notify/wxpay")
     public String notify(@RequestBody String body,
                          @RequestHeader("Wechatpay-Serial") String serialNumber,
                          @RequestHeader("Wechatpay-Nonce") String nonce,
