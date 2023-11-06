@@ -22,13 +22,25 @@
     <div class="card">
         <div class="card-body">
             <div class="badges-list">
-                <a th:href="@{./list(tradeState=NOTPAY)}"><span class="badge bg-azure-lt">NOTPAY</span></a>
-                <a th:href="@{./list(tradeState=SUCCESS)}"><span class="badge bg-green-lt">SUCCESS</span></a>
-                <a th:href="@{./list(tradeState=PAYERROR)}"><span class="badge bg-red-lt">PAYERROR</span></a>
-                <a th:href="@{./list(tradeState=CLOSED)}"><span class="badge">CLOSED</span></a>
+                <p>按订单状态筛选：</p>
+                <a th:href="@{./list(tradeState=NOTPAY)}"><span class="badge bg-azure-lt">未支付</span></a>
+                <a th:href="@{./list(tradeState=SUCCESS)}"><span class="badge bg-green-lt">支付成功</span></a>
+                <a th:href="@{./list(tradeState=PAYERROR)}"><span class="badge bg-red-lt">支付错误</span></a>
+                <a th:href="@{./list(tradeState=CLOSED)}"><span class="badge">已关闭订单</span></a>
+                <a th:href="@{./list(tradeState=null)}"><span class="badge">非关闭订单</span></a>
             </div>
         </div>
     </div>
+</div>
+
+<div style="text-align: right;margin-top: 20px;">
+    <p>当前第<span th:text="${page.getNumber()} + 1"></span>页，
+        总共<span th:text="${page.totalPages}"></span>页，<span th:text="${page.totalElements}"></span>条记录
+        <a th:href="@{./list(page=0, tradeState=${tradeState})}">首页</a>
+        <a th:href="@{./list(page=${page.number}-1, tradeState=${tradeState})}" th:unless="${page.first}">上一页</a>
+        <a th:href="@{./list(page=${page.number}+1, tradeState=${tradeState})}" th:unless="${page.last}">下一页</a>
+        <a th:href="@{./list(page=${page.totalPages - 1}, tradeState=${tradeState})}">尾页</a>
+    </p>
 </div>
 
 <table class="table table-striped">
@@ -60,8 +72,15 @@
         </td>
     </tr>
 </table>
-<div class="card-body">
-    <a th:href="@{./list(page=${page.number}-1, tradeState=${tradeState})}" class="item" th:unless="${page.first}">上一页</a>
-    <a th:href="@{./list(page=${page.number}+1, tradeState=${tradeState})}" class="item" th:unless="${page.last}">下一页</a>
+<div class="card" th:if="${page.getTotalPages > 1}" >
+    <div class="card-body">
+        <ul class="pagination ">
+            <li class="page-item page-prev disabled">
+                <a th:href="@{./list(page=${page.number}-1, tradeState=${tradeState})}" class="item" th:unless="${page.first}">上一页</a>
+            </li>
+            <li class="page-item page-next">
+                <a th:href="@{./list(page=${page.number}+1, tradeState=${tradeState})}" class="item" th:unless="${page.last}">下一页</a>
+            </li>
+        </ul>
+    </div>
 </div>
-<br>

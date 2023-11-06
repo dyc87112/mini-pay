@@ -35,9 +35,9 @@ public class WXTradeController {
     }
 
     @GetMapping("/list")
-    public String tradeList(@PageableDefault(size = 20, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable,
+    public String tradeList(@PageableDefault(size = 5, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable,
                             @RequestParam(required = false) String tradeState, Model model) {
-        if (tradeState == null) {
+        if (tradeState == null || tradeState.isEmpty()) {
             model.addAttribute("page", wxTradeQueryRepository.findAllByTradeStateIsNot("CLOSED", pageable));
         } else {
             model.addAttribute("page", wxTradeQueryRepository.findAllByTradeStateEquals(tradeState, pageable));
