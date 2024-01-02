@@ -86,6 +86,7 @@ public class WXNativeService {
         Transaction t = queryWXPayTradeByOutTradeNo(outTradeNo);
         WXTrade wxTrade = new WXTrade();
         wxTrade.prepayUpdate(t);
+        wxTrade.setOutTradeTitle(description);
         wxTrade.setCodeUrl(codeUrl);
         wxTradeRepository.save(wxTrade);
 

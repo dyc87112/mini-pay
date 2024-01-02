@@ -46,6 +46,7 @@
 <table class="table table-striped">
     <thead>
         <th>#</th>
+        <th>商户订名称</th>
         <th>商户订单号</th>
         <th>商户ID</th>
         <th>应用ID</th>
@@ -57,6 +58,7 @@
     </thead>
     <tr th:each="trade, iterStat : ${page.content}">
         <td th:text="${iterStat.count}">1</td>
+        <td th:text="${trade.outTradeTitle}"></td>
         <td th:text="${trade.outTradeNo}"></td>
         <td th:text="${trade.mchid}"></td>
         <td th:text="${trade.appid}"></td>
@@ -65,8 +67,10 @@
             <span class="badge" th:text="${trade.tradeStateDesc}"
                   th:data-value="${trade.tradeState}">Green</span>
         </td>
-        <td th:text="${trade.createTime}"></td>
-        <td th:text="${trade.successTime}"></td>
+        <td th:text="${#dates.format(trade.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${#dates.format(trade.successTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+<!--        <td th:text="${trade.createTime}"></td>-->
+<!--        <td th:text="${trade.successTime}"></td>-->
         <td>
             <a target="_blank" th:href="@{./detail(outTradeNo=${trade.outTradeNo})}">详细</a>
         </td>

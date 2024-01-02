@@ -21,6 +21,7 @@ public class WXTrade {
     private String mchid;
     @Column(unique = true)
     private String outTradeNo;
+    private String outTradeTitle;
     private String tradeState;
     private String tradeStateDesc;
     private String tradeType;
