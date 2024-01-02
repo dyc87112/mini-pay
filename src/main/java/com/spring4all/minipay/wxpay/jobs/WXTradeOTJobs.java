@@ -1,5 +1,6 @@
 package com.spring4all.minipay.wxpay.jobs;
 
+import cn.hutool.core.date.DateUtil;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
 import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -37,7 +39,19 @@ public class WXTradeOTJobs {
                 wxTradeRepository.save(wxTrade);
             } else if(t.getTradeState().equals(Transaction.TradeStateEnum.SUCCESS)){
                 // 本地订单是NOTPAY，微信端是SUCCESS，更新本地订单
-
+                log.info("订单 {} 状态不一致, 同步信息", wxTrade.getOutTradeNo());
+                log.info("WXTrade: {}", wxTrade);
+                log.info("Transaction: {}", t);
+                wxTrade.setTradeState(t.getTradeState().name());
+                wxTrade.setTradeStateDesc(t.getTradeStateDesc());
+                wxTrade.setTransactionId(t.getTransactionId());
+                wxTrade.setTradeType(t.getTradeType().name());
+                wxTrade.setCurrency(t.getAmount().getCurrency());
+                wxTrade.setPayerTotal(t.getAmount().getPayerTotal());
+                wxTrade.setPayerOpenId(t.getPayer().getOpenid());
+                wxTrade.setBankType(t.getBankType());
+                wxTrade.setSuccessTime(new Date(DateUtil.parse(t.getSuccessTime()).getTime()));
+                wxTradeRepository.save(wxTrade);
             }
         }
     }
