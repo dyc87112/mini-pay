@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
 import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
+import com.spring4all.minipay.wxpay.service.WXNativeServiceMgr;
 import com.wechat.pay.java.service.payments.model.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +21,15 @@ import java.util.List;
 @AllArgsConstructor
 public class WXTradeOTJobs {
 
-    private WXNativeService wxNativeService;
+    private WXNativeServiceMgr wxNativeServiceMgr;
     private WXTradeRepository wxTradeRepository;
 
-
-//  @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 60000)
     public void overtimeJobs() {
-        // FIXME 接入多商户之后，要分开处理
         // 查询超过15分钟没有支付的订单，查一下微信订单，如果还未支付就关闭订单
         List<WXTrade> list = wxTradeRepository.findOvertimeTrade(15);
         for(WXTrade wxTrade : list) {
+            WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(wxTrade.getMchid());
             Transaction t = wxNativeService.queryWXPayTradeByOutTradeNo(wxTrade.getOutTradeNo());
             if(t.getTradeState().equals(Transaction.TradeStateEnum.NOTPAY)) {
                 // 本地订单是NOTPAY，微信端也是NOTPAY

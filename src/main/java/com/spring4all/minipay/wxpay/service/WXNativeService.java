@@ -185,14 +185,14 @@ public class WXNativeService {
         // 再查询一下微信端的订单状态，如果是关闭的话，代表调用成功，更新本地数据库
         Transaction t = queryWXPayTradeByOutTradeNo(outTradeNo);
         if (t.getTradeState().equals(Transaction.TradeStateEnum.CLOSED)) {
-            log.info("关闭商户订单: {} ", outTradeNo);
+            log.info("关闭商户 {} 的订单: {} ", wxPayProperties.getMerchantId(), outTradeNo);
             WXTrade wxTrade = wxTradeRepository.findByMchidAndOutTradeNo(wxPayProperties.getMerchantId(), outTradeNo);
             wxTrade.setTradeState(t.getTradeState().name());
             wxTrade.setTradeStateDesc(t.getTradeStateDesc());
             wxTradeRepository.save(wxTrade);
         } else {
             // TODO 订单没有成功关闭，给出提示
-            log.error("订单关闭失败：" + outTradeNo);
+            log.error("关闭商户 {} 的订单: {} 失败：", wxPayProperties.getMerchantId(), outTradeNo);
         }
     }
 
