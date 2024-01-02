@@ -22,15 +22,25 @@ import static com.spring4all.minipay.admin.controller.PageLayout.page_layout_1;
 @RequestMapping("/wxpay")
 public class WXTradeController {
 
-    private WXTradeRepository wxTradeRepository;
     private WXTradeQueryRepository wxTradeQueryRepository;
     private WXNativeService wxNativeService;
 
-    @GetMapping("/test")
-    public String testPage(Model model) {
-        model.addAttribute("page_title", "流程测试");
+    @GetMapping("/test-v1")
+    public String testPageV1(Model model) {
+        model.addAttribute("config", wxNativeService.getWxPayProperties());
+        model.addAttribute("test_out_trade_no", System.currentTimeMillis());
+        model.addAttribute("page_title", "流程测试-单商户");
         model.addAttribute("page_pretitle", "微信支付");
-        model.addAttribute("content", "wxpay/test");
+        model.addAttribute("content", "wxpay/test-v1/test");
+        return page_layout_1;
+    }
+
+    @GetMapping("/test-v2")
+    public String testPageV2(Model model) {
+        model.addAttribute("test_out_trade_no", System.currentTimeMillis());
+        model.addAttribute("page_title", "流程测试-多商户");
+        model.addAttribute("page_pretitle", "微信支付");
+        model.addAttribute("content", "wxpay/test-v2/test");
         return page_layout_1;
     }
 

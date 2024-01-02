@@ -11,27 +11,27 @@
     <div class="row">
         <div class="col">
             <!-- 第1步：预下单 -->
-            <div th:replace="~{wxpay/test-s1 :: step-1}"></div>
+            <div th:replace="~{wxpay/test-v2/test-s1 :: step-1}"></div>
         </div>
     </div>
     <hr>
     <div class="row">
         <div class="col">
             <!-- 第2步：获取支付二维码 -->
-            <div th:replace="~{wxpay/test-s2 :: step-2}"></div>
+            <div th:replace="~{wxpay/test-v2/test-s2 :: step-2}"></div>
         </div>
     </div>
     <hr>
     <div class="row">
         <div class="col">
             <!-- 第3步：等待支付回调 -->
-            <div th:replace="~{wxpay/test-s3 :: step-3}"></div>
+            <div th:replace="~{wxpay/test-v2/test-s3 :: step-3}"></div>
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <div th:replace="~{wxpay/test-close :: step-close}"></div>
+            <div th:replace="~{wxpay/test-v2/test-close :: step-close}"></div>
         </div>
     </div>
     <br>

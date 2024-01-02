@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>支付测试页</title>
+    <script type="text/javascript" src="/js/jquery-3.7.0.min.js"></script>
+</head>
+<body>
+<div class="container" style="width: 100%;">
+    <div class="alert alert-info" role="alert">
+        商户ID（merchantId）：<span th:text="${config.merchantId}"></span><br>
+        商户序列号（merchantId）：<span th:text="${config.merchantSerialNumber}"></span><br>
+        应用ID（appId）：<span th:text="${config.appId}"></span><br>
+        回调URL：<span th:text="${config.notifyUrl}"></span>
+    </div>
+    <div class="row">
+        <div class="col">
+            <!-- 第1步：预下单 -->
+            <div th:replace="~{wxpay/test-v1/test-s1 :: step-1}"></div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <!-- 第2步：获取支付二维码 -->
+            <div th:replace="~{wxpay/test-v1/test-s2 :: step-2}"></div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <!-- 第3步：等待支付回调 -->
+            <div th:replace="~{wxpay/test-v1/test-s3 :: step-3}"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div th:replace="~{wxpay/test-v1/test-close :: step-close}"></div>
+        </div>
+    </div>
+    <br>
+</div>
+</body>
+</html>

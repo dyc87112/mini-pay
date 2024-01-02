@@ -1,0 +1,29 @@
+<div th:fragment="step-close">
+    <h2>关闭订单</h2>
+    <p>调用时机：定时任务，超过15分钟没完成的订单，调用这个接口关闭订单</p>
+    <p>调用接口：/api/wxpay/closeTrade</p>
+    <p>请求类型：GET</p>
+    <p>请求参数：outTradeNo：<input id="outTradeNo_close" type="text"/></p>
+    <button type="button" onclick="closeTrade()">关闭订单</button>
+    <script>
+        function closeTrade() {
+            $.ajax({
+                url: "/api/wxpay/closeTrade",
+                type: "GET",
+                data: {
+                    outTradeNo: $("#outTradeNo_close").val(),
+                },
+                success: function (result) {
+                    console.log(JSON.stringify(result));
+                    const code = result["code"];
+                    const message = result["message"];
+                    const detail = result["detail"];
+                    alert(code + " : " + message);
+                },
+                error: function (result) {
+                    alert(JSON.stringify(result));
+                }
+            });
+        }
+    </script>
+</div>

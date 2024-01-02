@@ -5,14 +5,12 @@ import com.spring4all.minipay.common.CommonResponse;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
 import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
+import com.spring4all.minipay.wxpay.service.WXNativeServiceMgr;
 import com.wechat.pay.java.service.payments.model.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -21,26 +19,29 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api/wxpay")
 @AllArgsConstructor
-public class WXPayController extends WXPayBaseController {
+public class WXPayV2Controller extends WXPayBaseController {
 
     private WXTradeRepository wxTradeRepository;
-    private WXNativeService wxNativeService;
+    private WXNativeServiceMgr wxNativeServiceMgr;
 
     /**
      * 下单接口，获取微信支付的链接
      *
+     * @param merchantId
+     * @param appId
      * @param outTradeNo，商户订单号（用户端自己生成）
      * @param description，订单描述
      * @param totalFee，单位：分
      * @return
      * @throws Exception
      */
-    @GetMapping("/prepay")
-    public CommonResponse<String> prepay(@RequestParam String outTradeNo,
-                                         @RequestParam String description,
-                                         @RequestParam int totalFee) throws Exception {
+    @GetMapping("/prepay/{merchantId}")
+    public CommonResponse<String> prepayV2(@PathVariable String merchantId,
+                                           @RequestParam String appId, @RequestParam String outTradeNo,
+                                           @RequestParam String description, @RequestParam int totalFee) {
         log.info("预支付：outTradeNo = {}, skuName = {}, totalFee = {}", outTradeNo, description, totalFee);
-        String codeURl = wxNativeService.preNativePay(outTradeNo, description, totalFee);
+        WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(merchantId);
+        String codeURl = wxNativeService.preNativePay(appId, outTradeNo, description, totalFee);
         log.info("预支付：outTradeNo = {}, codeURl = {}", outTradeNo, codeURl);
         return new CommonResponse<String>("200", "预支付", codeURl);
     }
@@ -51,23 +52,29 @@ public class WXPayController extends WXPayBaseController {
      * @param outTradeNo
      * @return
      */
-    @GetMapping("/queryWXPayTrade")
-    public CommonResponse<Transaction> queryWXPayTrade(@RequestParam String outTradeNo) {
+    @GetMapping("/queryWXPayTrade/{merchantId}")
+    public CommonResponse<Transaction> queryWXPayTrade(@PathVariable String merchantId,
+                                                       @RequestParam String outTradeNo) {
         log.info("查询微信支付订单 outTradeNo: {}", outTradeNo);
+        WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(merchantId);
         Transaction t = wxNativeService.queryWXPayTradeByOutTradeNo(outTradeNo);
         return new CommonResponse<>("200", "查询成功：" + outTradeNo, t);
     }
 
-    @GetMapping("/queryLocalTrade")
-    public CommonResponse<WXTrade> queryLocalTrade(@RequestParam String outTradeNo) {
+    @GetMapping("/queryLocalTrade/{merchantId}")
+    public CommonResponse<WXTrade> queryLocalTrade(@PathVariable String merchantId,
+                                                   @RequestParam String outTradeNo) {
         log.info("查询本地支付订单 outTradeNo: {}", outTradeNo);
+        WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(merchantId);
         WXTrade t = wxNativeService.queryLocalTradeByOutTradeNo(outTradeNo);
         return new CommonResponse<>("200", "查询本地订单成功", t);
     }
 
-    @GetMapping("/queryTrade")
-    public CommonResponse<WXTrade> queryTrade(@RequestParam String outTradeNo) {
+    @GetMapping("/queryTrade/{merchantId}")
+    public CommonResponse<WXTrade> queryTrade(@PathVariable String merchantId,
+                                              @RequestParam String outTradeNo) {
         log.info("查询本地订单和微信订单，返回最新状态: {}", outTradeNo);
+        WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(merchantId);
         WXTrade wxTrade = wxNativeService.queryLocalTradeByOutTradeNo(outTradeNo);
         Transaction transaction = wxNativeService.queryWXPayTradeByOutTradeNo(outTradeNo);
         if (!wxTrade.getTradeState().equals(transaction.getTradeState().name())) {
@@ -90,8 +97,10 @@ public class WXPayController extends WXPayBaseController {
         return new CommonResponse<>("200", "查询本地订单成功", wxTrade);
     }
 
-    @GetMapping("/closeTrade")
-    public CommonResponse<String> closeTrade(@RequestParam String outTradeNo) {
+    @GetMapping("/closeTrade/{merchantId}")
+    public CommonResponse<String> closeTrade(@PathVariable String merchantId,
+                                             @RequestParam String outTradeNo) {
+        WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(merchantId);
         wxNativeService.closeOrderByOutTradeNo(outTradeNo);
         return new CommonResponse<>("200", "关闭订单成功", outTradeNo);
     }

@@ -23,8 +23,10 @@ public class WXTradeOTJobs {
     private WXNativeService wxNativeService;
     private WXTradeRepository wxTradeRepository;
 
-    @Scheduled(fixedRate = 60000)
+
+//  @Scheduled(fixedRate = 60000)
     public void overtimeJobs() {
+        // FIXME 接入多商户之后，要分开处理
         // 查询超过15分钟没有支付的订单，查一下微信订单，如果还未支付就关闭订单
         List<WXTrade> list = wxTradeRepository.findOvertimeTrade(15);
         for(WXTrade wxTrade : list) {

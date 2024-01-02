@@ -2,8 +2,8 @@ package com.spring4all.minipay.wxpay.service;
 
 import com.spring4all.minipay.exception.TradeIsClosedException;
 import com.spring4all.minipay.exception.TradeIsSuccessException;
-import com.spring4all.minipay.wxpay.WXPayConfig;
-import com.spring4all.minipay.wxpay.WXPayProperties;
+import com.spring4all.minipay.wxpay.config.WXPayConfig;
+import com.spring4all.minipay.wxpay.config.WXPayProperties;
 import com.spring4all.minipay.wxpay.dao.WXNotificationRepository;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
 import com.spring4all.minipay.wxpay.entity.WXNotification;
@@ -14,15 +14,20 @@ import com.wechat.pay.java.core.notification.RequestParam;
 import com.wechat.pay.java.service.payments.model.Transaction;
 import com.wechat.pay.java.service.payments.nativepay.NativePayService;
 import com.wechat.pay.java.service.payments.nativepay.model.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * 微信支付：单商户服务
+ */
 @Slf4j
+@Data
 @Service
 public class WXNativeService {
 
-    private final WXTradeRepository wxTradeRepository;
-    private final WXNotificationRepository wxNotificationRepository;
+    private WXTradeRepository wxTradeRepository;
+    private WXNotificationRepository wxNotificationRepository;
 
     private WXPayProperties wxPayProperties;
     private NativePayService nativePayService;
@@ -43,9 +48,9 @@ public class WXNativeService {
         this.wxNotificationRepository = wxNotificationRepository;
     }
 
-    public String preNativePay(String outTradeNo, String description, int totalFee) {
+    public String preNativePay(String appId, String outTradeNo, String description, int totalFee) {
         // 该商户订单号存在，同时商户订单还没有关闭，那么就直接返回codeUrl给商户扫码支付
-        WXTrade _wxTrade = wxTradeRepository.findByOutTradeNo(outTradeNo);
+        WXTrade _wxTrade = wxTradeRepository.findByMchidAndOutTradeNo(wxPayProperties.getMerchantId(), outTradeNo);
         if (_wxTrade != null) {
             // 本地数据记录订单已经关闭或已经完成，则直接抛出异常
             switch(_wxTrade.getTradeState()) {
@@ -67,7 +72,7 @@ public class WXNativeService {
 
         // 商户订单号没问题，准备调用微信的与下单
         PrepayRequest request = new PrepayRequest();
-        request.setAppid(wxPayProperties.getAppId());
+        request.setAppid(appId);
         request.setMchid(wxPayProperties.getMerchantId());
         request.setNotifyUrl(wxPayProperties.getNotifyUrl());
         request.setOutTradeNo(outTradeNo);
@@ -92,6 +97,19 @@ public class WXNativeService {
 
         return codeUrl;
     }
+
+    /**
+     * 单商户单AppId时的使用方法
+     *
+     * @param outTradeNo
+     * @param description
+     * @param totalFee
+     * @return
+     */
+    public String preNativePay(String outTradeNo, String description, int totalFee) {
+       return preNativePay(wxPayProperties.getAppId(), outTradeNo, description, totalFee);
+    }
+
 
     /**
      * <h1>订单查询</h1>
@@ -138,7 +156,7 @@ public class WXNativeService {
      * @return
      */
     public WXTrade queryLocalTradeByOutTradeNo(String outTradeNo) {
-        WXTrade wxTrade = wxTradeRepository.findByOutTradeNo(outTradeNo);
+        WXTrade wxTrade = wxTradeRepository.findByMchidAndOutTradeNo(wxPayProperties.getMerchantId(), outTradeNo);
         return wxTrade;
     }
 
@@ -168,7 +186,7 @@ public class WXNativeService {
         Transaction t = queryWXPayTradeByOutTradeNo(outTradeNo);
         if (t.getTradeState().equals(Transaction.TradeStateEnum.CLOSED)) {
             log.info("关闭商户订单: {} ", outTradeNo);
-            WXTrade wxTrade = wxTradeRepository.findByOutTradeNo(outTradeNo);
+            WXTrade wxTrade = wxTradeRepository.findByMchidAndOutTradeNo(wxPayProperties.getMerchantId(), outTradeNo);
             wxTrade.setTradeState(t.getTradeState().name());
             wxTrade.setTradeStateDesc(t.getTradeStateDesc());
             wxTradeRepository.save(wxTrade);
@@ -226,7 +244,7 @@ public class WXNativeService {
         wxNotificationRepository.save(wxNotification);
 
         // 解析后更新本地订单数据
-        WXTrade wxTrade = wxTradeRepository.findByOutTradeNo(t.getOutTradeNo());
+        WXTrade wxTrade = wxTradeRepository.findByMchidAndOutTradeNo(t.getMchid(), t.getOutTradeNo());
         wxTrade.notificationUpdate(t);
         wxTradeRepository.save(wxTrade);
 
@@ -235,5 +253,6 @@ public class WXNativeService {
     }
 
     // TODO 有时候支付回调没有成功，这个时候支付状态如何同步？
+
 
 }

@@ -1,5 +1,7 @@
 package com.spring4all.minipay.wxpay.entity;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.wechat.pay.java.service.payments.model.Transaction;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -58,8 +60,12 @@ public class WXTrade {
         // "out_trade_no":"trade_no_2","payer":{"openid":"oJIIz6ozMiqxG2-r166S4cIbY4J8"},
         // "success_time":"2023-08-06T17:06:14+08:00","trade_state":"SUCCESS",
         // "trade_state_desc":"支付成功","trade_type":"NATIVE","transaction_id":"4200001900202308063951583810"}
+
+//        DateTime time = DateUtil.parse(t.getSuccessTime());
+//        Date date = new Date(time.getTime());
+
         this.setTransactionId(t.getTransactionId());
-        this.setSuccessTime(new Date());
+        this.setSuccessTime(DateUtil.parse(t.getSuccessTime()));
 
         this.setTradeState(t.getTradeState().name());
         this.setTradeStateDesc(t.getTradeStateDesc());

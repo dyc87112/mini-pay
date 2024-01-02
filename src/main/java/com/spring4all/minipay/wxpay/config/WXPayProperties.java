@@ -1,15 +1,16 @@
-package com.spring4all.minipay.wxpay;
+package com.spring4all.minipay.wxpay.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 单商户配置
+ */
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "wxpay")
 public class WXPayProperties {
-
-    private final static String notifyPath = "/notify/wxpay";
 
     private String appId;
     private String merchantId;
@@ -18,9 +19,21 @@ public class WXPayProperties {
     private String apiV3Key;
     private String notifyUrl;
     private String notifyHost;
+    private String notifyPath = "/notify/wxpay";
 
     public void setNotifyHost(String notifyHost) {
         this.notifyHost = notifyHost;
-        this.notifyUrl = this.notifyHost + notifyPath;
+
+        // 设置回调URL
+        boolean a = this.notifyHost.endsWith("/");
+        boolean b = this.notifyPath.startsWith("/");
+        if(a && b) {
+            this.notifyUrl = this.notifyHost + this.notifyPath.substring(1);
+        } else if(a || b) {
+            this.notifyUrl = this.notifyHost + this.notifyPath;
+        } else {
+            this.notifyUrl = this.notifyHost + "/" + this.notifyPath;
+        }
     }
+
 }

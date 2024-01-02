@@ -1,0 +1,64 @@
+<div th:fragment="step-1">
+    <h2>第1步：预下单</h2>
+    <p>请求接口：/api/wxpay/prepay</p>
+    <p>请求类型：GET</p>
+    <p>URL参数：</p>
+    <table class="table">
+        <thead>
+        <th>参数名</th>
+        <th>参数值</th>
+        <th>参数说明</th>
+        </thead>
+        <tr>
+            <td>outTradeNo：</td>
+            <td><input id="outTradeNo" type="text" th:value="${test_out_trade_no}"/></td>
+            <td>商户订单号</td>
+        </tr>
+        <tr>
+            <td>description：</td>
+            <td><input id="description" type="text" value="XX订单"/></td>
+            <td>订单标题</td>
+        </tr>
+        <tr>
+            <td>totalFee：</td>
+            <td><input id="totalFee" type="text" value="1"/></td>
+            <td>订单价格，单位：分</td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <button type="button" onclick="prepay();">预下单</button>
+            </td>
+        </tr>
+    </table>
+    <p>返回数据：</p>
+    <p id="prepay-result" style="color: red;"></p>
+    <script type="text/javascript">
+        function prepay() {
+            $.ajax({
+                url: "/api/wxpay/prepay",
+                type: "GET",
+                data: {
+                    outTradeNo: $("#outTradeNo").val(),
+                    description: $("#description").val(),
+                    totalFee: $("#totalFee").val()
+                },
+                success: function (result) {
+                    $("#prepay-result").html(JSON.stringify(result));
+                    const code = result["code"];
+                    const message = result["message"];
+                    const detail = result["detail"];
+                    if (code == 200 && detail != "") {
+                        // 联动设置接下来要用的数据
+                        $("#codeUrl").val(detail);
+                        $("#qrcode").attr("src", "/api/wxpay/qrcode?codeUrl=" + $("#codeUrl").val());
+                        $("#outTradeNo_query").val($("#outTradeNo").val());
+                        $("#outTradeNo_close").val($("#outTradeNo").val());
+                    }
+                },
+                error: function (result) {
+                    $("#prepay-result").html(JSON.stringify(result));
+                }
+            });
+        }
+    </script>
+</div>

@@ -1,10 +1,13 @@
-package com.spring4all.minipay.wxpay;
+package com.spring4all.minipay.wxpay.config;
 
 import com.wechat.pay.java.core.RSAAutoCertificateConfig;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 微信支付：单商户配置
+ */
 @Slf4j
 @Data
 @Configuration

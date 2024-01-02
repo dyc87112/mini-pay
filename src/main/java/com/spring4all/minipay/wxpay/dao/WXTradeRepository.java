@@ -11,6 +11,10 @@ public interface WXTradeRepository
 
     WXTrade findByOutTradeNo(String outTradeNo);
 
+    WXTrade findByMchidAndAppidAndOutTradeNo(String mchid, String appid, String outTradeNo);
+
+    WXTrade findByMchidAndOutTradeNo(String mchid, String outTradeNo);
+
     /**
      * 查询超时x分钟的订单
      * @param timeInMinutes

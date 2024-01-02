@@ -2,17 +2,11 @@ package com.spring4all.minipay;
 
 import com.spring4all.minipay.wxpay.dao.WXTradeQueryRepository;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
-import com.spring4all.minipay.wxpay.entity.WXTrade;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
-
-import java.text.MessageFormat;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MiniPayApplicationTests {
