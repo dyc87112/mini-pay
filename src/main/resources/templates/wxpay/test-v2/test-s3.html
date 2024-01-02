@@ -1,7 +1,10 @@
 <div th:fragment="step-3">
     <h2>第3步：等待支付回调</h2>
     <p>支付页面给一个“确认支付”按钮，调用这个接口获取最新状态</p>
-    <p>调用接口：/api/wxpay/queryTrade</p>
+    <p>调用接口：
+        <span class="badge bg-warning-lt">/api/wxpay/queryTrade</span>
+        <span class="badge bg-danger-lt" name="request-url-merchantId"></span>
+    </p>
     <p>请求类型：GET</p>
     <p>请求参数：outTradeNo：<input id="outTradeNo_query" type="text"/></p>
     <table class="table">
@@ -23,7 +26,7 @@
     <script type="text/javascript">
         function queryWXPayTrade() {
             $.ajax({
-                url: "/api/wxpay/queryWXPayTrade",
+                url: "/api/wxpay/queryWXPayTrade/" + merchantId,
                 type: "GET",
                 data: {
                     outTradeNo: $("#outTradeNo_query").val(),
@@ -52,7 +55,7 @@
 
         function queryLocalTrade() {
             $.ajax({
-                url: "/api/wxpay/queryLocalTrade",
+                url: "/api/wxpay/queryLocalTrade/" + merchantId,
                 type: "GET",
                 data: {
                     outTradeNo: $("#outTradeNo_query").val(),

@@ -1,6 +1,8 @@
 <div th:fragment="step-1">
     <h2>第1步：预下单</h2>
-    <p>请求接口：/api/wxpay/prepay</p>
+    <p>请求接口：
+        <span class="badge bg-warning-lt">/api/wxpay/prepay</span>
+        <span class="badge bg-danger-lt" name="request-url-merchantId"></span></p>
     <p>请求类型：GET</p>
     <p>URL参数：</p>
     <table class="table">
@@ -9,6 +11,11 @@
         <th>参数值</th>
         <th>参数说明</th>
         </thead>
+        <tr>
+            <td>appId：</td>
+            <td><input id="appId" type="text"/></td>
+            <td>应用号</td>
+        </tr>
         <tr>
             <td>outTradeNo：</td>
             <td><input id="outTradeNo" type="text" th:value="${test_out_trade_no}"/></td>
@@ -35,9 +42,10 @@
     <script type="text/javascript">
         function prepay() {
             $.ajax({
-                url: "/api/wxpay/prepay",
+                url: "/api/wxpay/prepay/" + merchantId,
                 type: "GET",
                 data: {
+                    appId:  $("#appId").val(),
                     outTradeNo: $("#outTradeNo").val(),
                     description: $("#description").val(),
                     totalFee: $("#totalFee").val()

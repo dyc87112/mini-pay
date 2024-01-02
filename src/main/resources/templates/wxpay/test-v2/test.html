@@ -5,9 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>支付测试页</title>
     <script type="text/javascript" src="/js/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript">
+        let merchantId = ''
+        $(document).ready(function() {
+            $('#select-merchant').change(function () {
+                selectMerchant();
+                // TODO 请求获取这个商户的相关配置
+            });
+
+            selectMerchant();
+        });
+
+        function selectMerchant() {
+            merchantId = $('#select-merchant').val();
+            $("span[name='request-url-merchantId']").text("/" + merchantId);
+
+            $.ajax({
+                url: "/wxpay/test-v2-config/" + merchantId,
+                type: "GET",
+                success: function (result) {
+                    $("#appId-span").text(result["appId"]);
+                    $("#notifyUrl-span").text(result["notifyUrl"]);
+                    // test-s1中的appId
+                    $("#appId").val(result["appId"]);
+                },
+                error: function (result) {
+                }
+            });
+
+        }
+    </script>
 </head>
 <body>
 <div class="container" style="width: 100%;">
+    <div class="alert alert-info" role="alert">
+        商户ID（merchantId）：
+        <select id="select-merchant" type="text" value="" style="margin-right: 20px;">
+            <option th:each="merchant: ${merchantSet}" th:text="${merchant}" th:value="${merchant}"></option>
+        </select>
+        应用ID（appId）：<span id="appId-span" class="badge bg-danger-lt"></span><br><br>
+        回调URL：<span id="notifyUrl-span"></span>
+    </div>
     <div class="row">
         <div class="col">
             <!-- 第1步：预下单 -->
