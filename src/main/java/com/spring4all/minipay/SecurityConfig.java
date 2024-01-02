@@ -19,7 +19,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/notify/**").permitAll()
                 .and()
-                .formLogin(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults())
+                .csrf((csrf) -> csrf.disable());
         return http.build();
     }
 
