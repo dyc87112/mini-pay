@@ -17,4 +17,9 @@ public class WXPayPropertiesV2 {
 
     private Map<String, WXPayProperties> config = new HashMap<>();
 
+    /**
+     * 证书路径
+     */
+    private String certPath;
+
 }
