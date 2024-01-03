@@ -15,61 +15,21 @@ public interface WXTradeRepository
 
     WXTrade findByMchidAndOutTradeNo(String mchid, String outTradeNo);
 
-    /**
-     * 查询上个月成功支付的订单总金额
-     *
-     * @param mchid
-     * @param appid
-     */
     @Query(nativeQuery = true, value = """
             select sum(total) from wx_trade 
             where trade_state = 'SUCCESS' and mchid=:mchid and appid=:appid
-              and year(create_time) = year(now())
-              and month(create_time) = month(now()) - 1
+              and year(create_time) = year(CURDATE() - INTERVAL :x MONTH)
+              and month(create_time) = month(CURDATE() - INTERVAL :x MONTH)
             """)
-    Long findLastMonthSuccessTotalFeeByMchIdAndAppId(String mchid, String appid);
+    Long findLastXMonthSuccessTotalFeeByMchIdAndAppId(int x, String mchid, String appid);
 
-    /**
-     * 查询当前月成功支付的订单总金额
-     *
-     * @param mchid
-     * @param appid
-     * @return
-     */
-    @Query(nativeQuery = true, value = """
-            select sum(total) from wx_trade 
-            where trade_state = 'SUCCESS' and mchid=:mchid and appid=:appid
-              and year(create_time) = year(now())
-              and month(create_time) = month(now())
-            """)
-    Long findCurrentMonthSuccessTotalFeeByMchIdAndAppId(String mchid, String appid);
-
-    /**
-     * 查询上个月成功支付的订单总金额
-     *
-     * @param mchid
-     */
     @Query(nativeQuery = true, value = """
             select sum(total) from wx_trade 
             where trade_state = 'SUCCESS' and mchid=:mchid
-              and year(create_time) = year(now())
-              and month(create_time) = month(now()) - 1
+              and year(create_time) = year(CURDATE() - INTERVAL :x MONTH)
+              and month(create_time) = month(CURDATE() - INTERVAL :x MONTH)
             """)
-    Long findLastMonthSuccessTotalFeeByMchId(String mchid);
-
-    /**
-     * 查询当前月成功支付的订单总金额
-     *
-     * @param mchid
-     * @return
-     */
-    @Query(nativeQuery = true, value = """
-            select sum(total) from wx_trade 
-            where trade_state = 'SUCCESS' and mchid=:mchid
-              and year(create_time) = year(now())
-              and month(create_time) = month(now())
-            """)
-    Long findCurrentMonthSuccessTotalFeeByMchId(String mchid);
+    Long findLastXMonthSuccessTotalFeeByMchId(int x, String mchid);
 
     /**
      * 查询超时x分钟的订单

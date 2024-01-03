@@ -32,8 +32,8 @@ public class IndexController {
 
         // 单商户汇总数据
         String mchid =  wxNativeService.getWxPayProperties().getMerchantId();
-        Long lastMonthFee = wxTradeRepository.findLastMonthSuccessTotalFeeByMchId(mchid);
-        Long currentMonthFee = wxTradeRepository.findCurrentMonthSuccessTotalFeeByMchId(mchid);
+        Long lastMonthFee = wxTradeRepository.findLastXMonthSuccessTotalFeeByMchId(1, mchid);
+        Long currentMonthFee = wxTradeRepository.findLastXMonthSuccessTotalFeeByMchId(0, mchid);
         model.addAttribute("mchid", mchid);
         model.addAttribute("lastMonthFee", lastMonthFee == null ? 0 : lastMonthFee / 100.0);
         model.addAttribute("currentMonthFee", currentMonthFee == null ? 0 : currentMonthFee / 100.0);
@@ -43,8 +43,8 @@ public class IndexController {
         for(String mid : wxNativeServiceMgr.merchantSet()) {
             Map<String, Object> map = new HashMap<>();
             map.put("mchid", mid);
-            Long _lastMonthFee = wxTradeRepository.findLastMonthSuccessTotalFeeByMchId(mid);
-            Long _currentMonthFee = wxTradeRepository.findCurrentMonthSuccessTotalFeeByMchId(mid);
+            Long _lastMonthFee = wxTradeRepository.findLastXMonthSuccessTotalFeeByMchId(1, mid);
+            Long _currentMonthFee = wxTradeRepository.findLastXMonthSuccessTotalFeeByMchId(0, mid);
             map.put("lastMonthFee", _lastMonthFee == null ? 0 : _lastMonthFee / 100.0);
             map.put("currentMonthFee", _currentMonthFee == null ? 0 : _currentMonthFee / 100.0);
             multiMchList.add(map);
