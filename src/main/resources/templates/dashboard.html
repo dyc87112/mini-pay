@@ -1,1 +1,49 @@
-<h1>Hello World</h1>
+<h3>单商户汇总数据</h3>
+<div class="col-12">
+    <div class="card">
+        <div class="card-table table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>商户ID</th>
+                    <th>上月总金额</th>
+                    <th>本月总金额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr style="font-size: 0.8rem;">
+                    <td>1</td>
+                    <td th:text="${mchid}"></td>
+                    <td th:text="${lastMonthFee}"></td>
+                    <td th:text="${currentMonthFee}"></td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<br>
+<h3>多商户汇总数据</h3>
+<div class="col-12">
+    <div class="card">
+        <div class="card-table table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>商户ID</th>
+                    <th>上月总金额</th>
+                    <th>本月总金额</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="data, iterStat : ${multiMchList}" style="font-size: 0.8rem;">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="${data.mchid}"></td>
+                    <td th:text="${data.lastMonthFee}"></td>
+                    <td th:text="${data.currentMonthFee}"></td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

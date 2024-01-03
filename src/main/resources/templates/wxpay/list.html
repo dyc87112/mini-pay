@@ -16,6 +16,11 @@
         --tblr-bg-opacity: 1;
         background-color: rgba(var(--tblr-red-rgb),var(--tblr-bg-opacity))!important;
     }
+
+    .markdown>table thead th, .table thead th {
+        font-size: 0.8rem;
+    }
+
 </style>
 
 <div class="col-12">
@@ -46,17 +51,18 @@
 <table class="table table-striped">
     <thead>
         <th>#</th>
-        <th>商户订名称</th>
+        <th>商户订单名称</th>
         <th>商户订单号</th>
         <th>商户ID</th>
         <th>应用ID</th>
         <th>金额</th>
         <th>订单状态</th>
-        <th>创建时间</th>
-        <th>支付时间</th>
+        <th>创建时间/支付时间</th>
+<!--        <th>创建时间</th>-->
+<!--        <th>支付时间</th>-->
         <th>操作</th>
     </thead>
-    <tr th:each="trade, iterStat : ${page.content}">
+    <tr th:each="trade, iterStat : ${page.content}" style="font-size: 0.8rem;">
         <td th:text="${iterStat.count}">1</td>
         <td th:text="${trade.outTradeTitle}"></td>
         <td th:text="${trade.outTradeNo}"></td>
@@ -67,8 +73,12 @@
             <span class="badge" th:text="${trade.tradeStateDesc}"
                   th:data-value="${trade.tradeState}">Green</span>
         </td>
-        <td th:text="${#dates.format(trade.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-        <td th:text="${#dates.format(trade.successTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td>
+            <span th:text="${#dates.format(trade.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span><br>
+            <span th:text="${#dates.format(trade.successTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+        </td>
+<!--        <td th:text="${#dates.format(trade.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>-->
+<!--        <td th:text="${#dates.format(trade.successTime, 'yyyy-MM-dd HH:mm:ss')}"></td>-->
 <!--        <td th:text="${trade.createTime}"></td>-->
 <!--        <td th:text="${trade.successTime}"></td>-->
         <td>

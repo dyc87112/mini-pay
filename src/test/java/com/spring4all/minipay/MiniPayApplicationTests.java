@@ -3,11 +3,13 @@ package com.spring4all.minipay;
 import com.spring4all.minipay.wxpay.dao.WXTradeQueryRepository;
 import com.spring4all.minipay.wxpay.dao.WXTradeRepository;
 import com.spring4all.minipay.wxpay.service.WXNativeService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MiniPayApplicationTests {
 
@@ -20,8 +22,10 @@ class MiniPayApplicationTests {
 
     @Test
     void wxTradeRepository() {
-        Pageable pageable = Pageable.unpaged();
-         wxTradeQueryRepository.findAllByTradeStateIsNot("CLOSED", pageable);
+//        Pageable pageable = Pageable.unpaged();
+//        wxTradeQueryRepository.findAllByTradeStateIsNot("CLOSED", pageable);
+//        Long a = wxTradeRepository.findLastMonthSuccessTotalFee();
+//        log.info("{}", a);
     }
 
     @Test

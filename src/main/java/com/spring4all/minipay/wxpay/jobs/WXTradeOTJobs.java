@@ -26,6 +26,7 @@ public class WXTradeOTJobs {
 
     @Scheduled(fixedRate = 60000)
     public void overtimeJobs() {
+        // FIXME 如果只有单商户的话，目前处理不了
         // 查询超过15分钟没有支付的订单，查一下微信订单，如果还未支付就关闭订单
         List<WXTrade> list = wxTradeRepository.findOvertimeTrade(15);
         for(WXTrade wxTrade : list) {
