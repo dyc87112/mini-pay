@@ -47,6 +47,27 @@ public class WXPayV2Controller extends WXPayBaseController {
     }
 
     /**
+     * POST版本的下单接口，获取微信支付的链接
+     * 使用POST请求体传递参数，解决订单描述可能出现乱码的问题
+     *
+     * @param merchantId 商户ID
+     * @param request 预支付请求体
+     * @return 预支付结果，包含支付二维码链接
+     */
+    @PostMapping("/prepay/{merchantId}")
+    public CommonResponse<String> prepayV2Post(@PathVariable String merchantId,
+                                               @RequestBody PrepayRequest request) {
+        log.info("POST预支付：outTradeNo = {}, description = {}, totalFee = {}", 
+                request.getOutTradeNo(), request.getDescription(), request.getTotalFee());
+        
+        WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(merchantId);
+        String codeURl = wxNativeService.preNativePay(request.getAppId(), request.getOutTradeNo(), 
+                                                     request.getDescription(), request.getTotalFee());
+        log.info("POST预支付：outTradeNo = {}, codeURl = {}", request.getOutTradeNo(), codeURl);
+        return new CommonResponse<String>("200", "预支付成功", codeURl);
+    }
+
+    /**
      * 查询微信支付订单状态，并更新本地状态
      *
      * @param outTradeNo
@@ -103,6 +124,32 @@ public class WXPayV2Controller extends WXPayBaseController {
         WXNativeService wxNativeService = wxNativeServiceMgr.getWXNativeService(merchantId);
         wxNativeService.closeOrderByOutTradeNo(outTradeNo);
         return new CommonResponse<>("200", "关闭订单成功", outTradeNo);
+    }
+
+    /**
+     * 预支付请求体
+     */
+    @Data
+    public static class PrepayRequest {
+        /**
+         * 应用ID
+         */
+        private String appId;
+        
+        /**
+         * 商户订单号（用户端自己生成）
+         */
+        private String outTradeNo;
+        
+        /**
+         * 订单描述
+         */
+        private String description;
+        
+        /**
+         * 订单金额，单位：分
+         */
+        private int totalFee;
     }
 
 }
