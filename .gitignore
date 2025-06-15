@@ -45,3 +45,6 @@ build/
 *.log*.gz
 /src/main/resources/static/tabler/demo/
 cert
+
+## other
+.DS_Store
